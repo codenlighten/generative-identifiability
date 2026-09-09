@@ -146,7 +146,21 @@ plateaus later broken by a new drop                       DRV             0     
 generator/partition cases checked                         EXH           910          910  ok
 cases attaining T_sem = 3 at k = 2                        EXH            94           94  ok
 cases attaining T_sem = 2 at k = 3                        EXH           265          265  ok
+cases exceeding n - rank(C) + 1                           DRV             0            0  ok
+emission ranks attaining the bound                        EXH             3            3  ok
+largest T_sem observed at emission rank 1                 EXH             1            1  ok
+rank-1 emission matrix has all rows equal                 DRV          True         True  ok
+rewrite rules whose output depends on match order         EXH             2            2  ok
+rewrite rules tested for order dependence                 EXH             8            8  ok
+distinct outcomes for the star rule in 12 runs            EXH             5            5  ok
+growth per step, one RHS edge                             EXH          1.00         1.00  ok
+growth per step, four RHS edges                           EXH          4.00         4.00  ok
+exploratory Markov family size                            EXH          3375         3375  ok
+generators identifiable under passive observation         EXH             1            1  ok
+generators sharing the witness observation law            EXH             5            5  ok
+predictive entropy of the witness class                   EXH         0.000        0.000  ok
+mechanism bits unresolved in the witness class            EXH          2.32         2.32  ok
 --------------------------------------------------------------------------------------------------------------
-143 claims audited, 143 ok, 0 needing attention
+157 claims audited, 157 ok, 0 needing attention
 
 machine-readable values written to RESULTS.txt
