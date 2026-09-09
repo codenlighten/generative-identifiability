@@ -563,6 +563,35 @@ of the preimage stabilisation at $T^\star$ reported in~\cite[\S9]{paper1}: preim
 contract over candidate generators, kernels contract over hidden-state directions, and both
 reach a floor.
 
+\paragraph{The kernel is strictly richer than a state partition.}
+Classical behavioural equivalence of states, $x \equiv y$ iff they induce identical
+observable laws, embeds in the kernel as the difference vectors $e_x - e_y$. Write $D$ for
+their span; $D \subseteq \ker B$ always. The question is whether the inclusion is strict,
+and it is: over $462$ generator--partition pairs from the unconstrained family, $4$ have
+$\dim \ker B > \dim D$. More pointedly, in $3$ cases two generators share both the
+observation partition and the state-equivalence classes---all singletons, no two states
+equivalent---while differing in $\dim \ker B$, which shows $\ker B$ is not a function of
+the partition.
+
+One witness can be checked by hand. Under the partition $\{0,2,3\} \mid \{1\}$, take
+\[
+  P_0 = (0,1,0,0), \quad P_1 = (0,1,0,0), \quad P_2 = (1,0,0,0), \quad
+  P_3 = (\tfrac12, \tfrac12, 0, 0).
+\]
+No two states induce the same observable law, so $D = \{0\}$. But
+$P_3 = \tfrac12(P_0 + P_2)$, and states $0$, $2$, $3$ share a first observation symbol, so
+$b_3 = \tfrac12(b_0 + b_2)$ and $v = (-\tfrac12, 0, -\tfrac12, 1)$ lies in $\ker B$ at
+every horizon. The observation is blind to a \emph{mixture} of hidden states while
+distinguishing every pair of them.
+
+This is why the semantic kernel is the right object rather than a refinement of the state
+partition. A partition can only record which states are indistinguishable; the kernel
+records which linear combinations are, and the $358$ weighted cancellations of
+Experiment~30 are of exactly this kind. In the sample the kernel dimension stabilised at
+$T \le 3$ throughout---$142$, $261$ and $59$ pairs at $T = 1, 2, 3$---though by
+Proposition~\ref{prop:mono} a plateau bounds the kernel from above without proving
+stabilisation for all $T$, which would need a finite-rank argument we do not have.
+
 Proposition~\ref{prop:kernel} also gives the robust/fragile distinction a definition rather
 than a label: a dependency is \emph{robust} when its difference vector lies in
 $\ker B_{O,T}$ for every admissible $O$, which identity ties satisfy because that vector is

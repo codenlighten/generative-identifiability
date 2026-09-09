@@ -401,6 +401,21 @@ C("E31_DISCRETE_KERNEL_DIM", "dim ker B, discrete partition, all classes", "EXH"
 C("E31_K3_NONMONOTONE", "non-monotone horizon steps in dim ker", "EXH", S31,
   grab(S31, r"non-monotone steps across both classes: (\d+)"), "0")
 
+# --- E32, the limiting kernel ---
+S32 = "mgs_limit.py"
+C("E32_MONOTONE_FAILURES", "kernel monotonicity failures", "DRV", S32,
+  grab(S32, r"kernel monotone in horizon: (\d+) failures"), "0")
+C("E32_INJECTIVE_FAILURES", "injective-observation zero-kernel failures", "DRV", S32,
+  grab(S32, r"injective O gives zero kernel: (\d+) failures"), "0")
+C("E32_LUMPABLE_FAILURES", "lumpable dim = n-k failures", "DRV", S32,
+  grab(S32, r"lumpable gives dim = n - k: (\d+) failures"), "0")
+C("E32_RICHER_COUNT", "pairs with a mixture-only kernel direction", "EXH", S32,
+  grab(S32, r"^      (\d+)/\d+ generator/partition pairs"), "4")
+C("E32_RICHER_TOTAL", "generator/partition pairs examined", "EXH", S32,
+  grab(S32, r"^      \d+/(\d+) generator/partition pairs"), "462")
+C("E32_PARTITION_INSUFFICIENT", "same partition and classes, different kernel dim",
+  "EXH", S32, grab(S32, r"but different kernel dimension: (\d+) cases"), "3")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))
