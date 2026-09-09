@@ -429,6 +429,17 @@ C("E33_TIGHT_K2", "cases attaining T_sem = 3 at k = 2", "EXH", S33,
 C("E33_TIGHT_K3", "cases attaining T_sem = 2 at k = 3", "EXH", S33,
   grab(S33, r"^      3\s+2\s+T=1: \d+, T=2: (\d+)"), "265")
 
+# --- E34, the emission-rank bound ---
+S34 = "mgs_emission.py"
+C("E34_OVER_BOUND", "cases exceeding n - rank(C) + 1", "DRV", S34,
+  grab(S34, r"T_sem exceeds n - rank\(C\) \+ 1:\s+(\d+)"), "0")
+C("E34_RANKS_ATTAINED", "emission ranks attaining the bound", "EXH", S34,
+  grab(S34, r"bound attained for (\d+)/\d+ emission ranks"), "3")
+C("E34_RANK1_MAX_TSEM", "largest T_sem observed at emission rank 1", "EXH", S34,
+  grab(S34, r"^  rank-1 uniform\s+\d+\s+\d+\s+T=(\d+):"), "1")
+C("E34_RANK1_ROWS_EQUAL", "rank-1 emission matrix has all rows equal", "DRV", S34,
+  grab(S34, r"rank-1 matrix has all rows equal: (\w+)"), "True")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))

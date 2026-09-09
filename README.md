@@ -122,11 +122,11 @@ python3 audit.py              # re-derives every number in the manuscript
 No number in the manuscript is manually trusted. [`audit.py`](audit.py) re-derives each
 quantitative claim from the script that produces it, recomputing from scratch the few that
 no committed script emitted, and tags provenance as exhaustive computation, sampled
-computation, derivation, or recomputed-in-audit. Current status: **77/77**
+computation, derivation, or recomputed-in-audit. Current status: **143/143**
 ([`AUDIT.txt`](AUDIT.txt)), with values emitted to [`RESULTS.txt`](RESULTS.txt) for direct
 LaTeX import.
 
-A full audit re-executes all seventeen experiment scripts, several of which do exact
+A full audit re-executes all eighteen experiment scripts, several of which do exact
 rational linear algebra and one of which enumerates 1,500,625 generators, so a cold run
 from a fresh clone takes roughly half an hour. Outputs are cached per script and keyed on
 mtime, so in practice only changed scripts re-run. It is a release check, not a

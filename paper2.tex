@@ -46,9 +46,9 @@ lump identify $0\%$ of the class, two that cross it identify $58.55\%$, at ident
 cost---but crossing is not the rule. A sweep over all $15$ partitions refutes it, and the
 exact criterion is conditional information: the value of adding reset $j$ to a set $A$ is
 $H(Z_j \mid Z_A) = H(Z_j) - I(Z_j; Z_A)$, intrinsic information less what is already
-known. And information gain is
-submodular across every triple we can form, which places greedy experiment selection on
-familiar footing.
+known. And because the exact experiment outputs are
+deterministic functions of the generator, information gain is monotone submodular by
+Shannon's inequality, placing greedy selection on familiar footing.
 
 The organising claim is that resolving a mechanism is partition refinement, that the order
 on experiments controls its rate, and that the value of an intervention is the conditional
@@ -601,11 +601,47 @@ maximum is reached---$T_{\mathrm{sem}} = 3$ occurs $94$ times at $k=2$, $T_{\mat
 occurs $265$ times at $k=3$, and every case at $k=4$ has $T_{\mathrm{sem}} = 1$. So the
 bound is tight rather than merely valid, and no smaller horizon suffices in general.
 
-We state Proposition~\ref{prop:finite} for the model actually formalised here: finite
-hidden-state set, finite observation alphabet, deterministic state observation,
-time-homogeneous transitions, exact finite-dimensional laws. The proof uses the
-deterministic selectors directly and we do not extend it to stochastic emissions,
-controlled processes, continuous state, or empirically estimated laws.
+The proof does not in fact use determinism, and saying so sharpens the result. Nothing in
+the plateau argument needs $E_y$ to be a $0/1$ selector; it needs only
+$\sum_y E_y = I$ and $P\mathbf{1} = \mathbf{1}$, both of which hold when
+$E_y = \operatorname{diag}\big(\Pr(Y = y \mid X = x)\big)$ for a stochastic emission
+matrix $C_{xy} = \Pr(Y=y \mid X=x)$. Only the starting dimension changes: $E_y\mathbf{1}$
+is the $y$-th column of $C$, so $\dim V_1 = \operatorname{rank} C$.
+
+\begin{corollary}[Stochastic emissions]\label{cor:stoch}
+For an $n$-state time-homogeneous finite HMM with emission matrix $C$, the kernels satisfy
+$K_{T+1} \subseteq K_T$, any one-step plateau is permanent, and
+\[
+  K_\infty \;=\; K_{\,n - \operatorname{rank}(C) + 1}.
+\]
+\end{corollary}
+
+Checking the generalisation over $15$ transition matrices and emission matrices of each
+rank, no $T_{\mathrm{sem}}$ exceeds the bound, and it is attained for
+$\operatorname{rank} C = 2, 3, 4$. It is \emph{not} attained at rank $1$, and that gap is
+structural rather than a sampling artefact: a row-stochastic $C$ of rank $1$ has all rows
+equal, since they are proportional and each sums to one, so emission is independent of
+state, $V_1 = \operatorname{span}\{\mathbf{1}\}$, and
+$V_2 = \operatorname{span}_y E_y P \mathbf{1} = \operatorname{span}_y E_y \mathbf{1} = V_1$.
+Thus $T_{\mathrm{sem}} = 1$ whenever $\operatorname{rank} C = 1$, and the bound $n$ is
+unattainable for $n > 1$. The bound is therefore tight for $\operatorname{rank} C \ge 2$
+and loose exactly at the degenerate rank where the observation is uninformative.
+
+Proposition~\ref{prop:finite} is the case where $C$ is a $0/1$ matrix with one entry per
+row, whose columns are the block indicators, so $\operatorname{rank} C = k$. The controlling
+quantity is therefore not the size of the observation alphabet but the rank of the one-step
+emission information: an alphabet with many symbols whose state signatures span a
+low-dimensional subspace behaves like a coarse partition, and an emission matrix of full row
+rank gives $T_{\mathrm{sem}} = 1$ without any deterministic state label. Finite-length
+equivalence bounds for weighted automata and HMMs are established territory, so we claim
+Corollary~\ref{cor:stoch} as a statement inside this framework rather than as new to that
+literature.
+
+We state these results for the model formalised here: finite hidden-state set, finite
+observation alphabet, time-homogeneous transitions, exact finite-dimensional laws. We do
+not extend them to controlled or state-action-dependent observation, nonstationary
+dynamics, continuous hidden state, or empirically estimated laws, where the exact
+finite-dimensional linear representation is unavailable.
 
 \paragraph{The kernel is strictly richer than a state partition.}
 Classical behavioural equivalence of states, $x \equiv y$ iff they induce identical
