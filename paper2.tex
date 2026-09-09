@@ -402,12 +402,56 @@ violations. The mechanism is transparent once seen---under $R_3 = R_0$ we have
 $3 \in \operatorname{cl}_G(\{0\})$, but $Z_3$ also depends on rows $1$ and $2$, so $Z_0$
 alone cannot determine it. A coordinate dependency is not an output dependency.
 
-The converse count is $0$. Across every class, partition and subset, no $j$ lay in
-$\operatorname{cl}_Z(A)$ without lying in $\operatorname{cl}_G(A)$: the observation map
-never manufactured a dependency, only destroyed them. We report
-$\operatorname{cl}_Z(A) \subseteq \operatorname{cl}_G(A)$ as an empirical regularity over
-$6 \times 14 \times 16$ cases rather than a theorem, since we have no proof and $Z_j$'s
-dependence on the full generator does not obviously force it.
+The converse count was $0$ in these six classes, and we briefly took
+$\operatorname{cl}_Z \subseteq \operatorname{cl}_G$ for an empirical regularity. It is
+not one. For deterministic experiment maps in general it fails at once: with $R_0, R_1$
+independent and $Z_0 = Z_1 = R_0 \oplus R_1$, we have $1 \in \operatorname{cl}_Z(\{0\})$
+while $1 \notin \operatorname{cl}_G(\{0\})$. Experiment~29 constructs the same effect
+inside the reset-law architecture.
+
+\paragraph{The observation map can create dependencies: lumpability.}
+Fix the balanced partition and constrain each row so its \emph{block} transition sums
+depend only on the source state's block---states $0$ and $1$ both send mass $a$ to block
+$0$, states $2$ and $3$ both send $b$---while the split within each block stays free. Then
+$R_0$ and $R_1$ are not functions of one another, yet the observed process is Markov on
+blocks and resets $0$ and $1$ induce the same observable law. Characterising each class by
+$(|\mathcal{P}|, |\mathcal{D}|, |\mathcal{C}|)$---dependencies preserved, destroyed and
+created---under that partition:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llrrrr}
+\toprule
+Class & constraint & $|\HH|$ & $|\mathcal{P}|$ & $|\mathcal{D}|$ & $|\mathcal{C}|$ \\
+\midrule
+FREE          & none                        & 10{,}000 & 0 & 0 & 0 \\
+TIED          & $R_3 = R_0$                 & 1{,}000  & 8 & 0 & 0 \\
+LUMPABLE      & block sums tied by block    & 1{,}156  & 0 & 0 & \textbf{16} \\
+TIED\_LUMPABLE & both                       & 340      & 8 & 0 & \textbf{8} \\
+RANDOM        & size-matched control        & 1{,}156  & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Redundancy has at least two independent origins. The lumpable class creates $16$
+dependencies with no generator dependency to inherit; a random class of the same
+cardinality creates none.}
+\label{tab:pdc}
+\end{table}
+
+The created dependencies are exactly $Z_0 \leftrightarrow Z_1$ and
+$Z_2 \leftrightarrow Z_3$ and their extensions, and they appear under \emph{one} of the
+$14$ partitions---the balanced one the class was built for. Under any other observation the
+lumpability does not hold and nothing is created. The effect is the quotient matching the
+constraint, not the constraint alone.
+
+\paragraph{Robust and fragile dependencies.}
+The two failures of Experiment~28 turn out to be one phenomenon. Breaking its $181$
+inclusion violations down by class gives $100$ for PERM and $81$ for DERIVED, and zero for
+every other class---and those are precisely the two classes whose bases varied with the
+observation map. A dependency that survives every observation map cannot move the basis; a
+dependency some observation maps destroy must. So the constraint types split into
+\emph{robust} (the identity ties EQUAL and ADJACENT: nothing destroyed, basis invariant)
+and \emph{fragile} (PERM and DERIVED: dependencies destroyed, basis varies), with
+lumpability supplying a third category that owes nothing to the generator at all.
 
 \paragraph{The value of full intervention.}
 $H(G \mid O_P) - H(G \mid O_I) = 3.245 - 1.371 = 1.874$ bits, which by
@@ -428,11 +472,11 @@ crossing rule, submodularity---measured rather than argued.
 \section{Limitations}
 
 The lattice is computed on one family with one lumping, and the striking symmetry of
-Table~\ref{tab:lattice} is a property of that construction. We do not know which dependency types make the basis
-observation-dependent: Table~\ref{tab:dependency} shows equality and adjacent ties are
-invariant while permutation and two-row derived constraints are not, and four classes are
-too few to see the pattern. The regularity
-$\operatorname{cl}_Z \subseteq \operatorname{cl}_G$ is unproved. The crossing conjecture is refuted in general and survives only for equal-block
+Table~\ref{tab:lattice} is a property of that construction. We do not know what distinguishes robust from fragile dependencies beyond the four
+examples in Table~\ref{tab:dependency}; identity ties are robust and permutation or
+two-row constraints are fragile, which is a pattern with $n = 4$. The lumpable
+construction of Table~\ref{tab:pdc} is one aggregation matched to one partition, and we
+have not characterised which quotients create dependencies for which classes. The crossing conjecture is refuted in general and survives only for equal-block
 partitions; the exact selection rule $\Delta(j \mid A) = H(Z_j \mid Z_A)$ replaces it, but we have no
 structural characterisation of when that quantity is large, which is the open problem this
 paper leaves. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact

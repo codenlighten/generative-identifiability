@@ -141,6 +141,7 @@ def main():
     print("=" * 78)
     incl_viol = 0
     created = 0
+    per_class_viol = {}
     z2 = {}
     for name, rowidx in classes_def():
         n = len(rowidx)
@@ -163,6 +164,7 @@ def main():
             for A in SUBSETS:
                 if not (clG[A] <= clZ[A]):
                     incl_viol += 1
+                    per_class_viol[name] = per_class_viol.get(name, 0) + 1
                 created += len(clZ[A] - clG[A])
             per_part.append((("|".join("".join(map(str, b)) for b in part)),
                              tuple(tuple(b) for b in bases(clZ))))
@@ -187,5 +189,8 @@ def main():
           f"{'PASS' if incl_viol == 0 else 'FAIL'}   ({incl_viol} violations)")
     print(f"      dependencies present in cl_Z but not cl_G (observation-created): "
           f"{created}")
+    print("\n  Z3 violations by class (which constraint types lose dependencies):")
+    for nm, _ in classes_def():
+        print(f"        {nm:<9} {per_class_viol.get(nm, 0):>4}")
 
 main()

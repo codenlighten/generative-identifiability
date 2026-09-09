@@ -152,6 +152,18 @@ def main():
             if c: made.append(("|".join("".join(map(str, b)) for b in part), c))
         print(f"      partitions with created dependencies: {len(made)}/{len(PARTS)}"
               + (f"   {', '.join(f'{l}({c})' for l, c in made[:4])}" if made else ""))
+        # reconcile with Experiment 28, which aggregated over all partitions
+        tot_c = tot_d = 0
+        for part in PARTS:
+            k = len(part)
+            ov = np.empty(NS, dtype=np.int64)
+            for bi, b in enumerate(part):
+                for x in b: ov[x] = bi
+            zz = {j: zids(rowidx, ov, k, j) for j in range(NS)}
+            fz = fdset(lambda j: zz[j])
+            tot_c += len(fz - FDG); tot_d += len(FDG - fz)
+        print(f"      summed over all {len(PARTS)} partitions: "
+              f"destroyed {tot_d}, created {tot_c}")
 
     print()
     print("=" * 78)

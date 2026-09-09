@@ -346,6 +346,29 @@ C("E28_DERIVED_INVARIANT", "DERIVED class basis invariance", "EXH", Y,
 C("E28_RANDOM_INVARIANT", "RANDOM control basis invariance", "EXH", Y,
   grab(Y, r"^        RANDOM    (\w+)"), "invariant")
 
+# --- E29, observation-created dependencies ---
+Z = "mgs_lumpable.py"
+C("E29_L1_VERDICT", "pre-registered L1 verdict (lumpable creates)", "EXH", Z,
+  grab(Z, r"LUMPABLE class creates dependencies\s+(PASS|FAIL)"), "PASS")
+C("E29_L2_VERDICT", "pre-registered L2 verdict (random control does not)", "EXH", Z,
+  grab(Z, r"size-matched RANDOM class does not\s+(PASS|FAIL)"), "PASS")
+C("E29_LUMPABLE_CREATED", "dependencies created, lumpable class", "EXH", Z,
+  grab(Z, r"^  LUMPABLE\s+\|H\| =\s+[\d,]+\s+preserved\s+\d+\s+destroyed\s+\d+\s+created\s+(\d+)"),
+  "16")
+C("E29_RANDOM_CREATED", "dependencies created, size-matched control", "EXH", Z,
+  grab(Z, r"^  RANDOM\s+\|H\| =\s+[\d,]+\s+preserved\s+\d+\s+destroyed\s+\d+\s+created\s+(\d+)"),
+  "0")
+C("E29_TIED_PRESERVED", "dependencies preserved, tied class", "EXH", Z,
+  grab(Z, r"^  TIED\s+\|H\| =\s+[\d,]+\s+preserved\s+(\d+)"), "8")
+C("E29_LUMPABLE_PARTITIONS", "partitions in which the lumpable class creates", "EXH", Z,
+  grab(Z, r"^  LUMPABLE.*\n.*\n\s+partitions with created dependencies: (\d+)/"), "1")
+C("E28_VIOL_PERM", "Z3 violations, PERM class", "EXH", Y,
+  grab(Y, r"^        PERM\s+(\d+)"), "100")
+C("E28_VIOL_DERIVED", "Z3 violations, DERIVED class", "EXH", Y,
+  grab(Y, r"^        DERIVED\s+(\d+)"), "81")
+C("E28_VIOL_EQUAL", "Z3 violations, EQUAL class", "EXH", Y,
+  grab(Y, r"^        EQUAL\s+(\d+)"), "0")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))
