@@ -466,6 +466,21 @@ C("E19_WITNESS_PREDICTIVE_ENTROPY", "predictive entropy of the witness class", "
 C("E19_WITNESS_BITS_UNRESOLVED", "mechanism bits unresolved in the witness class",
   "EXH", ST, grab(ST, r"MECHANISM is ([\d.]+) bits unresolved"), "2.32", 0.005)
 
+# --- E35, belief-space interpretation ---
+S35 = "mgs_belief.py"
+C("E35_KERNEL_VECTORS", "kernel vectors checked for zero coordinate sum", "EXH", S35,
+  grab(S35, r"(\d+) kernel vectors checked"), "244")
+C("E35_NONZERO_SUM", "kernel vectors with nonzero coordinate sum", "DRV", S35,
+  grab(S35, r"kernel vectors checked, (\d+) with nonzero sum"), "0")
+C("E35_PURE_STATES_EQUAL", "pure states with identical laws in the witness", "EXH", S35,
+  grab(S35, r"pure states with identical laws: (\w+)"), "none")
+C("E35_BELIEFS_DISTINCT", "the two witness beliefs are distinct", "EXH", S35,
+  grab(S35, r"mu and nu are distinct: (\w+)"), "True")
+C("E35_LAWS_IDENTICAL", "the two witness beliefs induce identical laws", "EXH", S35,
+  grab(S35, r"observable laws identical: (\w+)"), "True")
+C("E35_D_OBS", "observable belief degrees of freedom in the witness", "EXH", S35,
+  grab(S35, r"= \d+ - \d+ = (\d+)"), "2")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))

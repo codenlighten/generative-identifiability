@@ -542,6 +542,41 @@ Rank--nullity supplies the dimension, and within-block differences are $n-k$ ind
 kernel vectors.
 \end{proof}
 
+\begin{proposition}[Belief-space interpretation]\label{prop:belief}
+$K_T \subseteq \mathbf{1}^\perp$: every semantic-kernel direction has zero coordinate sum.
+Consequently, for an interior belief $\mu \in \Delta^{n-1}$ and $\epsilon$ small enough
+that $\mu + \epsilon v$ remains in the simplex, $\mu$ and $\mu + \epsilon v$ induce
+identical observable laws if and only if $v \in K_T$.
+\end{proposition}
+\begin{proof}
+Rows of $B_T$ are probability laws over words, so $B_T \mathbf{1} = \mathbf{1}$. If
+$vB_T = 0$ then $0 = vB_T\mathbf{1} = v\cdot\mathbf{1}$. For the second claim,
+$(\mu + \epsilon v)B_T = \mu B_T$ iff $\epsilon v B_T = 0$ iff $vB_T = 0$.
+\end{proof}
+
+The kernel is therefore not merely algebraic. It is the nullspace of hidden-belief
+observability: the directions along which a belief can be moved without changing any
+observable future law. Writing
+\[
+  d_{\mathrm{obs}} \;=\; (n-1) - \dim K_\infty
+\]
+for the identifiable degrees of freedom of the hidden belief, the strongly lumpable
+$2{+}2$ system has $d_{\mathrm{obs}} = 3 - 2 = 1$: of three belief degrees of freedom only
+the mass assigned to the two aggregate blocks survives, which is one free parameter. Full
+row rank gives $d_{\mathrm{obs}} = n-1$, and all of belief space is observable.
+
+This sharpens the mixture witness considerably. In that system---$P_3 = \frac12(P_0+P_2)$
+under $\{0,2,3\}\mid\{1\}$---no two \emph{pure} states induce the same observable law, yet
+\[
+  \nu = (\tfrac14,\tfrac14,\tfrac14,\tfrac14)
+  \quad\text{and}\quad
+  \mu = (\tfrac18,\tfrac14,\tfrac18,\tfrac12)
+\]
+are distinct beliefs in the simplex inducing \emph{identical} observable laws, permanently,
+by Proposition~\ref{prop:finite}. The statement is not that the kernel is richer than the
+state partition but the operational one: no two hidden states are observationally
+equivalent, and yet two different hidden beliefs are.
+
 \paragraph{Blindness is structural or transient.}
 $\dim \ker B$ measures how many directions of hidden transition behaviour the observation
 cannot see, and it separates the classes sharply. Two of its values are settled in advance. Under the discrete partition it is $0$ for every
@@ -632,10 +667,14 @@ row, whose columns are the block indicators, so $\operatorname{rank} C = k$. The
 quantity is therefore not the size of the observation alphabet but the rank of the one-step
 emission information: an alphabet with many symbols whose state signatures span a
 low-dimensional subspace behaves like a coarse partition, and an emission matrix of full row
-rank gives $T_{\mathrm{sem}} = 1$ without any deterministic state label. Finite-length
-equivalence bounds for weighted automata and HMMs are established territory, so we claim
-Corollary~\ref{cor:stoch} as a statement inside this framework rather than as new to that
-literature.
+rank gives $T_{\mathrm{sem}} = 1$ without any deterministic state label. We claim Corollary~\ref{cor:stoch} as a transparent rank-sensitive
+finite-horizon certificate inside this framework, not as a new finite-equivalence
+principle. The underlying algebra is the reachable-subspace argument familiar from
+probabilistic and weighted automata, where equivalence is decidable in polynomial
+time~\cite{tzeng1992}, and from observable operator models~\cite{jaeger2000} and predictive
+state representations~\cite{littman2001}, which organise dynamical systems by exactly this
+finite linear dimension. Proposition~\ref{prop:belief} is the observability statement those
+frameworks make central, recovered here in the notation of the preimage framework.
 
 We state these results for the model formalised here: finite hidden-state set, finite
 observation alphabet, time-homogeneous transitions, exact finite-dimensional laws. We do
@@ -755,14 +794,21 @@ random variables. \emph{Information and Control}, 39(1):55--72, 1978.
 \bibitem{hauser2014} A. Hauser and P. B\"uhlmann. Two optimal strategies for active
 learning of causal models from interventional data. \emph{International Journal of
 Approximate Reasoning}, 55(4):926--939, 2014.
+\bibitem{jaeger2000} H. Jaeger. Observable operator models for discrete stochastic time
+series. \emph{Neural Computation}, 12(6):1371--1398, 2000.
 \bibitem{krause2005} A. Krause and C. Guestrin. Near-optimal nonmyopic value of
 information in graphical models. In \emph{Proceedings of the 21st Conference on
 Uncertainty in Artificial Intelligence}, 2005.
+\bibitem{littman2001} M. L. Littman, R. S. Sutton, and S. Singh. Predictive
+representations of state. In \emph{Advances in Neural Information Processing Systems 14},
+pages 1555--1561, 2001.
 \bibitem{lindley1956} D. V. Lindley. On a measure of the information provided by an
 experiment. \emph{Annals of Mathematical Statistics}, 27(4):986--1005, 1956.
 \bibitem{nemhauser1978} G. L. Nemhauser, L. A. Wolsey, and M. L. Fisher. An analysis of
 approximations for maximizing submodular set functions---I. \emph{Mathematical
 Programming}, 14(1):265--294, 1978.
+\bibitem{tzeng1992} W. Tzeng. A polynomial-time algorithm for the equivalence of
+probabilistic automata. \emph{SIAM Journal on Computing}, 21(2):216--227, 1992.
 \bibitem{paper1} G. J. Ward, B. W. Daugherty, and S. M. Ryan. Identifiability and
 predictability are distinct: measured preimages across generative systems, 2026.
 Unpublished draft.
