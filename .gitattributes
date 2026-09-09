@@ -1,0 +1,20 @@
+# Normalise line endings on checkin; check out with LF everywhere.
+* text=auto eol=lf
+
+# Language-aware diffs.
+*.py   text diff=python
+*.tex  text diff=tex
+*.md   text
+*.txt  text
+*.cff  text
+*.yml  text
+
+# Binary; never diff or merge.
+*.pdf  binary
+
+# Build outputs and machine-generated results: keep them out of language
+# statistics and collapse them in diff views. They are committed because they
+# are the audited record, not because they are hand-written.
+identifiability.pdf  linguist-generated=true
+AUDIT.txt            linguist-generated=true
+RESULTS.txt          linguist-generated=true

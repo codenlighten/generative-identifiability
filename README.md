@@ -129,6 +129,15 @@ and the 88 equivalence classes under reflection and colour swap both come out ri
 - **Graph isomorphism.** Rewriting comparisons use a Weisfeiler–Leman invariant, sound but
   incomplete, so the 1.09-bit residual is a lower bound on distinguishability.
 
+## Citing
+
+Metadata is in [`CITATION.cff`](CITATION.cff); GitHub's *Cite this repository* button reads
+it directly. The manuscript is an unpublished draft, so cite it as such:
+
+> Greg Ward, "Identifiability and Predictability Are Distinct: Measured Preimages Across
+> Generative Systems" (2026), unpublished draft.
+> https://github.com/codenlighten/generative-identifiability
+
 ## License
 
 MIT for the scripts, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) for the

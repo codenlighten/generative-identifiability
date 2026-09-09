@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software or the accompanying manuscript, please cite them
+  using the metadata below.
+type: software
+title: Generative Identifiability
+abstract: >-
+  Exact, enumerative measurements of how much of a generating rule an
+  observation determines, and whether knowing the rule determines the
+  system's behaviour. Covers expressions over {1,+,*}, the 256 elementary
+  cellular automata, a family of hypergraph rewriting systems, and a
+  pre-registered enumeration of all 1,500,625 four-state partially observed
+  Markov chains.
+authors:
+  - family-names: Ward
+    given-names: Greg
+    email: greg@smartledger.technology
+repository-code: https://github.com/codenlighten/generative-identifiability
+license:
+  - MIT
+  - CC-BY-4.0
+version: 0.6.0
+date-released: '2026-09-09'
+keywords:
+  - identifiability
+  - observational equivalence
+  - experimental design
+  - intervention
+  - cellular automata
+  - hidden Markov models
+  - hypergraph rewriting
+  - preimage
+preferred-citation:
+  type: manuscript
+  title: >-
+    Identifiability and Predictability Are Distinct: Measured Preimages
+    Across Generative Systems
+  abstract: >-
+    For a hypothesis space H of candidate generators and an observation O, we
+    measure the preimage P(O) exactly rather than searching for a minimal
+    generator. Unresolved information decomposes into observation deficiency
+    and degeneracy of H; the first term is removable only where the observer
+    may intervene; and the per-generator coordinates i_O(g) and p_k(g) do not
+    determine one another. A pre-registered enumeration of 1,500,625
+    partially observed Markov chains meets all five frozen criteria, and
+    changing only the admissible intervention class moves 82.0% of generators
+    between threshold-defined regimes.
+  authors:
+    - family-names: Ward
+      given-names: Greg
+      email: greg@smartledger.technology
+  year: 2026
+  month: 9
+  url: https://github.com/codenlighten/generative-identifiability
+  notes: Unpublished draft.
