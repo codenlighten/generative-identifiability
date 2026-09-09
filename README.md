@@ -126,6 +126,12 @@ computation, derivation, or recomputed-in-audit. Current status: **77/77**
 ([`AUDIT.txt`](AUDIT.txt)), with values emitted to [`RESULTS.txt`](RESULTS.txt) for direct
 LaTeX import.
 
+A full audit re-executes all seventeen experiment scripts, several of which do exact
+rational linear algebra and one of which enumerates 1,500,625 generators, so a cold run
+from a fresh clone takes roughly half an hour. Outputs are cached per script and keyed on
+mtime, so in practice only changed scripts re-run. It is a release check, not a
+pre-commit hook.
+
 Validation against known results: integer complexity reproduces
 [OEIS A005245](https://oeis.org/A005245) for n = 1..32; the six reversible elementary rules
 and the 88 equivalence classes under reflection and colour swap both come out right;
