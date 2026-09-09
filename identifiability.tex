@@ -41,13 +41,12 @@ the third. Second, the deficiency term is fixable only where the observer may
 intervene: given the same automata with the initial state chosen for us rather than
 by us, a late-arriving observer is left with $2.96$ bits and identifies the rule only
 $20.6\%$ of the time, against $0.00$ bits and a guarantee for an observer permitted to
-set the state. Third, and most consequentially, \emph{identifiability and
-predictability are distinct, non-redundant properties}: neither determines the other. Elementary cellular automata are identifiable in a
-single linear pass and yet unpredictable, their generator-to-behaviour map admitting
-no local structure; hypergraph rewriting under a fixed scheduler is predictable
-without being identifiable. These examples populate off-diagonal regimes that are
-not usually examined together within a common finite-preimage framework, separating
-generator recovery from behavioural prediction.
+set the state. Third, and most consequentially, \emph{identifiability and predictive uncertainty are
+distinct, non-redundant properties}: neither determines the other. This claim is tested
+within a single pre-registered stochastic hypothesis class, where all four combinations of
+generator identifiability and one-step predictive uncertainty are populated under one
+fixed pair of definitions. The deterministic systems separately illustrate that generator
+recovery need not provide computational shortcuts or forward determinacy.
 
 A pre-registered replication on a fourth and deliberately dissimilar system---all
 $1{,}500{,}625$ partially observed $4$-state Markov chains under a balanced lumping---meets
@@ -753,8 +752,9 @@ neighbouring rules.
 
 The programme this paper argues against---search for the smallest rule generating an
 observed object---fails in two independent ways. In the simplest system it is
-ill-posed: minima are non-unique, unstable, and lack a closed form. In the richest it
-is trivial and unhelpful: the rule is free and predicts nothing.
+ill-posed: minima are non-unique, unstable, and lack a closed form. In the cellular-automaton
+system, rule recovery is trivial but does not provide a useful local landscape for
+anticipating behavioural complexity.
 
 What replaces it is narrower and testable. Decompose $H(G\mid O)$ by
 Equation~\eqref{eq:decomp}, with the admissible class $\mathcal{A}$ stated explicitly
@@ -784,7 +784,9 @@ quantitative assertion from the script that produces it---recomputing from scrat
 that no committed script emitted---and reports each against the value printed here. It
 tags provenance as exhaustive computation, sampled computation, derivation, or recomputed
 in the audit itself, so a reader can see which claims rest on enumeration and which on a
-fixed seed. The current run is $45$ of $45$ claims verified, recorded in
+fixed seed. Export keys are assigned by hand rather than derived from the claim text, and
+a duplicate key is a hard error: a derived key changes silently when prose is reworded,
+and two claims differing only in punctuation collide, both of which occurred. The current run is $45$ of $45$ claims verified, recorded in
 \texttt{AUDIT.txt}, with the values also emitted to \texttt{RESULTS.txt} in a form
 \LaTeX{} can import directly. Bibliographic and interpretive assertions are outside its
 scope and were checked by hand.

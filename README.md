@@ -30,7 +30,8 @@ i_O(g) = log₂|P_O(g)|                  which mechanism is it?
 p_k(g) = H(Y_{t+k} | O≤t, G = g)       what happens next, given the mechanism?
 ```
 
-Identifiability is `|P(O)| = 1`. Everything here is enumerated exactly, not sampled.
+Identifiability is `|P(O)| = 1`. The principal finite hypothesis-space results are
+enumerated exactly; the few sampled results are explicitly marked.
 
 ## Results
 
