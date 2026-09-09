@@ -440,6 +440,32 @@ C("E34_RANK1_MAX_TSEM", "largest T_sem observed at emission rank 1", "EXH", S34,
 C("E34_RANK1_ROWS_EQUAL", "rank-1 emission matrix has all rows equal", "DRV", S34,
   grab(S34, r"rank-1 matrix has all rows equal: (\w+)"), "True")
 
+# --- coverage gap: two committed scripts had no claims until now ---
+RW = "mgs_rewrite.py"
+C("E10_ORDER_DEPENDENT_RULES", "rewrite rules whose output depends on match order",
+  "EXH", RW, grab(RW, r"(\d+)/\d+ rules provably depend on the scheduler"), "2")
+C("E10_RULES_TESTED", "rewrite rules tested for order dependence", "EXH", RW,
+  grab(RW, r"\d+/(\d+) rules provably depend on the scheduler"), "8")
+C("E10_STAR_OUTCOMES", "distinct outcomes for the star rule in 12 runs", "EXH", RW,
+  grab(RW, r"^star\s+\{xy\}\{yz\}->\{xw\}\{yw\}\{zw\}\s+(\d+)"), "5")
+C("E11_GROWTH_ONE_EDGE", "growth per step, one RHS edge", "EXH", RW,
+  grab(RW, r"\{xy\} -> \{xz\}\s+sizes=.*growth/step=([\d.]+)"), "1.00", 0.005)
+C("E11_GROWTH_FOUR_EDGES", "growth per step, four RHS edges", "EXH", RW,
+  grab(RW, r"\{xy\} -> \{xz\}\{zy\}\{yx\}\{zw\}\s+sizes=.*growth/step=([\d.]+)"),
+  "4.00", 0.005)
+
+ST = "mgs_stochastic.py"
+C("E19_CLASS_SIZE", "exploratory Markov family size", "EXH", ST,
+  grab(ST, r"\|H\| = ([\d,]+) generators"), "3375")
+C("E19_IDENTIFIABLE_PASSIVE", "generators identifiable under passive observation",
+  "EXH", ST, grab(ST, r"^  identifiable\s+(\d+) \("), "1")
+C("E19_WITNESS_CLASS_SIZE", "generators sharing the witness observation law", "EXH", ST,
+  grab(ST, r"^    (\d+) generators share this law"), "5")
+C("E19_WITNESS_PREDICTIVE_ENTROPY", "predictive entropy of the witness class", "EXH", ST,
+  grab(ST, r"predictive entropy ([\d.]+) bits/step"), "0.000", 0.0005)
+C("E19_WITNESS_BITS_UNRESOLVED", "mechanism bits unresolved in the witness class",
+  "EXH", ST, grab(ST, r"MECHANISM is ([\d.]+) bits unresolved"), "2.32", 0.005)
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))

@@ -122,7 +122,7 @@ python3 audit.py              # re-derives every number in the manuscript
 No number in the manuscript is manually trusted. [`audit.py`](audit.py) re-derives each
 quantitative claim from the script that produces it, recomputing from scratch the few that
 no committed script emitted, and tags provenance as exhaustive computation, sampled
-computation, derivation, or recomputed-in-audit. Current status: **143/143**
+computation, derivation, or recomputed-in-audit. Current status: **157/157**
 ([`AUDIT.txt`](AUDIT.txt)), with values emitted to [`RESULTS.txt`](RESULTS.txt) for direct
 LaTeX import.
 
