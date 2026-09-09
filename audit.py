@@ -302,6 +302,21 @@ C("E26_MARGIN_THREEBLOCK", "H(Z_j|Z_rest), three-state block, partition 0|123", 
 C("E26_BLOCKSIZE_VIOLATIONS", "block size vs conditional contribution, violations",
   "EXH", W, grab(W, r"violations across all \d+ partitions: (\d+)"), "0")
 
+# --- E27, is no-compression a product-structure artefact? ---
+X = "mgs_structure.py"
+C("E27_PRODUCT_COMPRESS", "partitions compressing, product class", "EXH", X,
+  grab(X, r"PRODUCT class, for reference: (\d+)/"), "0")
+C("E27_TIED_COMPRESS", "partitions compressing, tied class", "EXH", X,
+  grab(X, r"TIED class compresses somewhere\s+\w+\s+\((\d+)/"), "14")
+C("E27_RANDOM_COMPRESS", "partitions compressing, size-matched random class", "EXH", X,
+  grab(X, r"RANDOM class of equal size does not\s+\w+\s+\((\d+)/"), "0")
+C("E27_Y1", "pre-registered Y1 verdict", "EXH", X,
+  grab(X, r"TIED class compresses somewhere\s+(PASS|FAIL)"), "PASS")
+C("E27_Y2", "pre-registered Y2 verdict", "EXH", X,
+  grab(X, r"RANDOM class of equal size does not\s+(PASS|FAIL)"), "PASS")
+C("E27_TIED_BASIS_SIZE", "minimal basis size in the tied class", "EXH", X,
+  grab(X, r"^  023\|1\s+[\d,]+\s+[\d.]+%\s+(\d+)\s+\{0,1,2\}"), "3")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))
