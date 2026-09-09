@@ -256,6 +256,31 @@ C("E24_BALANCED_COV1", "balanced partition, coverage 1, H", "EXH", Q,
 C("E24_BALANCED_COV2", "balanced partition, coverage 2, H", "EXH", Q,
   grab(Q, r"^    01\|23\s+\|A\|=2\s+2\s+([\d.]+)"), "3.799", 0.005)
 
+# --- E25, decomposition of the crossing effect ---
+V = "mgs_novelty.py"
+C("E25_IDENTITY_PAIRS", "pairs satisfying log2|H| - H(G|O_A) = H(Z_A)", "DRV", V,
+  grab(V, r"== H\(Z_A\):\s+(\d+)/\d+ pairs"), "84")
+C("E25_H_SINGLETON_BLOCK", "H(Z_j) for a reset into a singleton block", "EXH", V,
+  grab(V, r"^  0\|123\s+0\s+1\s+([\d.]+)"), "5.017", 0.005)
+C("E25_H_THREE_BLOCK", "H(Z_j) for a reset into a three-state block", "EXH", V,
+  grab(V, r"^  0\|123\s+0\s+1\s+[\d.]+.*\n\s+1\s+3\s+([\d.]+)"), "6.028", 0.005)
+C("E25_REDUNDANCY_SAME_BLOCK", "mean I(Z_i;Z_j), same observation block", "EXH", V,
+  grab(V, r"same observation block\s+mean\s+([\d.]+)"), "4.935", 0.005)
+C("E25_REDUNDANCY_CROSS_BLOCK", "mean I(Z_i;Z_j), different blocks", "EXH", V,
+  grab(V, r"different blocks\s+mean\s+([\d.]+)"), "5.970", 0.005)
+C("E25_REVERSAL_INDIVIDUAL_TERM", "reversal gap, individual-entropy term", "EXH", V,
+  grab(V, r"^  0\|123     \{0,1\}.*\n    gap [+-][\d.]+ bits = individual term \+?([-\d.]+)"),
+  "1.011", 0.005)
+C("E25_REVERSAL_REDUNDANCY_TERM", "reversal gap, redundancy term", "EXH", V,
+  grab(V, r"^  0\|123     \{0,1\}.*\n    gap.*redundancy term \+?([-\d.]+)"),
+  "0.054", 0.005)
+C("E25_BALANCED_INDIVIDUAL_TERM", "balanced gap, individual-entropy term", "EXH", V,
+  grab(V, r"^  01\|23     \{0,2\}.*\n    gap [+-][\d.]+ bits = individual term \+?([-\d.]+)"),
+  "0.000", 0.005)
+C("E25_BALANCED_REDUNDANCY_TERM", "balanced gap, redundancy term", "EXH", V,
+  grab(V, r"^  01\|23     \{0,2\}.*\n    gap.*redundancy term \+?([-\d.]+)"),
+  "-0.387", 0.005)
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))

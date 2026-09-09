@@ -134,6 +134,48 @@ def main():
         if v:
             print(f"    {name:<26} mean {sum(v)/len(v):6.3f} bits over {len(v)} pairs"
                   f"   [{min(v):.3f}, {max(v):.3f}]")
+    # ---- exact decomposition of the Experiment 24 reversal ----
+    print("\n" + "=" * 78)
+    print("  WHY THE CROSSING EFFECT REVERSES: the two cases are driven by")
+    print("  different terms of the same decomposition")
+    print("=" * 78)
+    print(f"  {'partition':<10}{'pair':<8}{'cross?':>8}{'H(Z_i)+H(Z_j)':>15}"
+          f"{'I(Z_i;Z_j)':>12}{'H(Z_i,Z_j)':>12}{'H(G|O_A)':>11}")
+    for part, pairs in ((["0"], None), ):
+        pass
+    for lab_want, pr in (("0|123", [(1, 2), (0, 1)]), ("01|23", [(0, 1), (0, 2)])):
+        for part in PARTS:
+            lab = "|".join("".join(map(str, b)) for b in part)
+            if lab != lab_want:
+                continue
+            k = len(part)
+            obsv = np.empty(NS, dtype=np.int64)
+            for bi, b in enumerate(part):
+                for x in b:
+                    obsv[x] = bi
+            idm, H1 = {}, {}
+            for j in range(NS):
+                pm = np.zeros(NS, dtype=np.int64); pm[j] = 4
+                idm[j] = ids_of(laws(pm, obsv, k))[0]
+                c = np.bincount(idm[j]); H1[j] = ent(c[c > 0])
+            for (i, j) in pr:
+                Hij = joint_ent(idm[i], idm[j])
+                I = H1[i] + H1[j] - Hij
+                _, cnt = ids_of(np.stack([idm[i], idm[j]], axis=1))
+                hgo = float((cnt * np.log2(cnt)).sum() / NGEN)
+                print(f"  {lab:<10}{'{'+str(i)+','+str(j)+'}':<8}"
+                      f"{('yes' if obsv[i] != obsv[j] else 'no'):>8}"
+                      f"{H1[i]+H1[j]:>15.3f}{I:>12.3f}{Hij:>12.3f}{hgo:>11.3f}")
+            # attribute the gap
+            (a, b), (c, d) = pr
+            Ha = H1[a] + H1[b]; Hc = H1[c] + H1[d]
+            Ia = H1[a] + H1[b] - joint_ent(idm[a], idm[b])
+            Ic = H1[c] + H1[d] - joint_ent(idm[c], idm[d])
+            gap = (Ha - Ia) - (Hc - Ic)
+            print(f"    gap {gap:+.3f} bits = individual term {Ha-Hc:+.3f} "
+                  f"+ redundancy term {Ic-Ia:+.3f}")
+            print()
+
     print("\n  A pair is valuable when both terms are large and the redundancy small:")
     print("     H(Z_i, Z_j) = H(Z_i) + H(Z_j) - I(Z_i; Z_j).")
     print("  Whether that tracks block crossing is exactly what Experiment 24 found")

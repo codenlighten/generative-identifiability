@@ -219,11 +219,39 @@ novelty
 \]
 and for a pair, $H(Z_i,Z_j) = H(Z_i) + H(Z_j) - I(Z_i;Z_j)$. A pair of interventions is
 valuable when both carry information and little of it is shared. Block crossing was only
-ever a proxy for low redundancy, and Experiment~24 locates where the proxy fails: a reset
-into a singleton observational block is largely redundant, because the observation already
-identifies that state, while two resets inside a large collapsed block can expose
-distinctions passive observation suppresses. That is why the effect reverses on
-$\{0\} \mid \{1,2,3\}$ and holds on balanced partitions.
+ever a proxy for low redundancy, and decomposing the two cases (Experiment~25) shows they
+are governed by different terms.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llrrrr}
+\toprule
+Partition & pair & crossing & $H(Z_i){+}H(Z_j)$ & $I(Z_i;Z_j)$ & $H(G \mid O_A)$ \\
+\midrule
+$\{0\}\mid\{1,2,3\}$ & $\{1,2\}$ & no  & 12.056 & 3.621 & 4.852 \\
+                       & $\{0,1\}$ & yes & 11.045 & 3.675 & 5.917 \\
+\addlinespace
+$\{0,1\}\mid\{2,3\}$ & $\{0,1\}$ & no  & 14.342 & 5.241 & 4.187 \\
+                        & $\{0,2\}$ & yes & 14.342 & 4.854 & 3.799 \\
+\bottomrule
+\end{tabular}
+\caption{The crossing effect and its reversal, decomposed by
+$H(Z_i,Z_j) = H(Z_i) + H(Z_j) - I(Z_i;Z_j)$.}
+\label{tab:decomp}
+\end{table}
+
+On the balanced partition the individual entropies are \emph{exactly equal}, so the entire
+$0.387$-bit advantage of crossing is a redundancy effect: crossing pairs share less
+($4.854$ against $5.241$). On the unbalanced partition the redundancies are nearly equal
+---and the crossing pair is marginally the \emph{more} redundant of the two---so
+essentially all of the $1.065$-bit gap, $1.011$ of it, comes from the individual term: a
+reset into a singleton observational block carries only $5.017$ bits where a reset into the
+three-state block carries $6.028$.
+
+We had guessed the singleton reset was redundant. It is not; it is simply less informative
+on its own, which is a different mechanism and one the decomposition settles rather than
+argues. Crossing is a heuristic for low redundancy that works when symmetry equalises the
+individual terms and fails when it does not.
 
 The selection rule that follows is exact rather than heuristic:
 \[

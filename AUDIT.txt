@@ -80,7 +80,16 @@ unbalanced partition, coverage 1, H                       EXH         4.852     
 unbalanced partition, coverage 2, H                       EXH         5.917        5.917  ok
 balanced partition, coverage 1, H                         EXH         4.187        4.187  ok
 balanced partition, coverage 2, H                         EXH         3.799        3.799  ok
+pairs satisfying log2|H| - H(G|O_A) = H(Z_A)              DRV            84           84  ok
+H(Z_j) for a reset into a singleton block                 EXH         5.017        5.017  ok
+H(Z_j) for a reset into a three-state block               EXH         6.028        6.028  ok
+mean I(Z_i;Z_j), same observation block                   EXH         4.935        4.935  ok
+mean I(Z_i;Z_j), different blocks                         EXH         5.970        5.970  ok
+reversal gap, individual-entropy term                     EXH         1.011        1.011  ok
+reversal gap, redundancy term                             EXH         0.054        0.054  ok
+balanced gap, individual-entropy term                     EXH         0.000        0.000  ok
+balanced gap, redundancy term                             EXH        -0.387       -0.387  ok
 --------------------------------------------------------------------------------------------------------------
-77 claims audited, 77 ok, 0 needing attention
+86 claims audited, 86 ok, 0 needing attention
 
 machine-readable values written to RESULTS.txt
