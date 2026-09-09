@@ -1,0 +1,12 @@
+# LaTeX build artefacts
+*.aux
+*.log
+*.out
+*.toc
+
+# Python
+__pycache__/
+*.pyc
+
+# exported conversation transcripts
+20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]-[0-9]*.txt

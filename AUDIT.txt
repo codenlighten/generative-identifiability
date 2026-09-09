@@ -1,0 +1,54 @@
+=======================================================================================================
+CLAIM-BY-CLAIM NUMERICAL AUDIT
+=======================================================================================================
+claim                                              prov     expected   recomputed  status
+-------------------------------------------------------------------------------------------------------
+reachable integers, {1,+,*}, budget 18             EXH           404          404  ok
+growth ratio c[18]/c[17], {1,+,*}                  EXH          1.37        1.365  ok
+Boolean closure {AND,OR} on 3 vars                 EXH            18           18  ok
+Boolean closure {XOR,AND} on 3 vars                EXH           128          128  ok
+polynomials reachable, {x,1,+,*}, budget 10        EXH         12120        12120  ok
+polynomials reachable, {x,1,+}, budget 10          EXH            65           65  ok
+integer complexity cost(107)                       AUX            16           16  ok
+integer complexity cost(128)                       AUX            14           14  ok
+cost drops in [1,200]                              AUX            49           49  ok
+minimal ordered expression trees for 107           AUX         26624        26624  ok
+integer complexity matches OEIS A005245, n=1..32   AUX          True         True  ok
+reversible elementary rules on the ring            EXH             6            6  ok
+ECA equivalence classes under reflection+swap      EXH            88           88  ok
+rules recovered from a random initial condition    EXH           256          256  ok
+compressed spacetime span                          EXH          3083         3083  ok
+single-bit mutations moving C by >25% of span      EXH          10.7         10.7  ok
+rule 110 compressed spacetime size                 EXH          1562         1562  ok
+ECA plateau, single cell, T=400                    EXH          1.58         1.58  ok
+ECA plateau, density 0.50, T=1                     EXH          0.00         0.00  ok
+rules unidentifiable from single-cell seed (W=64)  EXH           132          132  ok
+polynomial curve, consecutive, k=3                 EXH          1.06         1.06  ok
+rewriting residual, full graph trajectory          EXH          1.09         1.09  ok
+rewriting hypothesis class size                    EXH           129          129  ok
+passive ECA, intervene, one step                   EXH          0.00         0.00  ok
+passive ECA, arrive at t=0                         EXH          0.51         0.51  ok
+passive ECA, arrive late                           EXH          2.96         2.96  ok
+fully identified, arriving late                    EXH          20.6         20.6  ok
+value of intervention before the system moves      EXH          1.46         1.46  ok
+starts landing on a period-1 attractor             EXH          30.2         30.2  ok
+starts on period 1 or 2                            EXH          42.0         42.0  ok
+least identifiable rule, bits unresolved           EXH          7.00         7.00  ok
+affine contraction, bits late                      SMP          2.56         2.56  ok
+single evaluation point, x=1                       AUX          7.90         7.90  ok
+single evaluation point, x=0                       AUX          9.29         9.29  ok
+single evaluation point, x=5 (injective)           AUX          0.00         0.00  ok
+pre-registered class size                          EXH       1500625      1500625  ok
+class size in bits                                 DRV         20.52        20.52  ok
+passive H(G|O)                                     EXH          3.24         3.24  ok
+passive distinct laws                              EXH        303229       303229  ok
+intervening H(G|O)                                 EXH          1.37         1.37  ok
+intervening distinct laws                          EXH       1235809      1235809  ok
+C2 spread of p_1                                   EXH          0.55         0.55  ok
+C3 spread of i_O                                   EXH         12.00        12.00  ok
+C4 qualifying generators                           EXH         81482        81482  ok
+C5 quadrant migration                              EXH          82.0         82.0  ok
+-------------------------------------------------------------------------------------------------------
+45 claims audited, 45 ok, 0 needing attention
+
+machine-readable values written to RESULTS.txt

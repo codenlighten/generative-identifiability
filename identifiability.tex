@@ -1,0 +1,835 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\title{\bf Identifiability and Predictability Are Distinct:\\
+Measured Preimages Across Generative Systems}
+\author{Greg Ward\\\small\texttt{greg@smartledger.technology}}
+\date{September 2026}
+
+\newcommand{\bits}{\ensuremath{\log_2|P(O)|}}
+\newcommand{\HH}{\ensuremath{\mathcal{H}}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A recurring proposal in complexity science is to search for the smallest rule that
+generates an observed structure. We argue that this question is not falsifiable as
+posed, and replace it with one that is: for a hypothesis space $\HH$ of candidate
+generators and an observation $O$, how large is the preimage
+$P(O)=\{h\in\HH : O(h)=O(g)\}$, and how does it shrink?
+We first measure this exactly---by enumeration, not sampling---in three deterministic
+systems: expressions over $\{1,+,\times\}$, the 256 elementary cellular automata, and a
+129-rule family of hypergraph rewriting systems; we then test the resulting framework in
+a pre-registered fourth system of a deliberately dissimilar kind.
+
+Three results follow. First, the unresolved information decomposes as
+\emph{observation deficiency} plus \emph{degeneracy of $\HH$}; the first term goes to
+zero in two of our systems and the second is $1.09$ bits of irreducible residual in
+the third. Second, the deficiency term is fixable only where the observer may
+intervene: given the same automata with the initial state chosen for us rather than
+by us, a late-arriving observer is left with $2.96$ bits and identifies the rule only
+$20.6\%$ of the time, against $0.00$ bits and a guarantee for an observer permitted to
+set the state. Third, and most consequentially, \emph{identifiability and
+predictability are distinct, non-redundant properties}: neither determines the other. Elementary cellular automata are identifiable in a
+single linear pass and yet unpredictable, their generator-to-behaviour map admitting
+no local structure; hypergraph rewriting under a fixed scheduler is predictable
+without being identifiable. These examples populate off-diagonal regimes that are
+not usually examined together within a common finite-preimage framework, separating
+generator recovery from behavioural prediction.
+
+A pre-registered replication on a fourth and deliberately dissimilar system---all
+$1{,}500{,}625$ partially observed $4$-state Markov chains under a balanced lumping---meets
+all five frozen criteria. There the same separation appears for an entirely different
+reason: the generator is exactly known and the outcome still is not, because the law is
+stochastic rather than because its behaviour is undecidable. In that system not one generator
+is uniquely identified by the pre-registered passive observation map at horizon $T=6$,
+while $82.0\%$ of them change quadrant once the observer is allowed to set the initial
+state.
+
+We further find that the forward map is not always a function: identical primitives,
+rules and iteration counts produce provably non-isomorphic outcomes under different
+match orders in $2$ of $8$ rewriting systems tested, so any inverse problem must
+carry the scheduler as an explicit argument.
+\end{abstract}
+
+\section{Introduction}
+
+That simple rules generate complex behaviour is not in dispute and has not been for
+decades. The proposal that recurs, and that motivates this work, is the converse: that
+one might systematically recover the simple rule beneath a complex object, and that a
+research programme could be organised around doing so.
+
+We think that programme fails as stated, for a reason that is easy to demonstrate and
+easy to overlook. Consider the smallest non-trivial generative system available:
+expressions built from the literal $1$ under $+$ and $\times$. The cost of the integer
+$107$---the minimum number of $1$s needed to write it---is $16$. There is no known
+closed form for this cost function; whether $\mathrm{cost}(2^k)=2k$ for all $k$ is
+open; the cost is not monotone, falling $49$ times in $[1,200]$ as the target
+increases, with $\mathrm{cost}(107)=16$ exceeding $\mathrm{cost}(128)=14$. And the
+minimum is not unique: $107$ admits $26{,}624$ minimal expression trees. If the
+simplest generative system in existence has no compact, unique, or even stable inverse,
+``find the simple rule'' cannot be the research question.
+
+The question that survives is about \emph{preimages}. Fix a hypothesis space $\HH$ of
+candidate generators and an observation map $O$. The object of study is
+\[
+  P(O) \;=\; \{\,h \in \HH \;:\; O(h) = O(g)\,\},
+\]
+the set of generators indistinguishable from the true one under $O$, and the quantity
+of interest is $\bits$, the bits of generator identity still unresolved.
+Identifiability is $|P(O)|=1$.
+
+This framing is not new---it is structural identifiability in the sense of Bellman and
+{\AA}str\"om~\cite{bellman1970}, a Markov equivalence class in the sense of Verma and
+Pearl~\cite{verma1990}, and the Myhill--Nerode construction in the sense of
+Nerode~\cite{nerode1958}. Our contribution is not the preimage framing itself, but exact
+measurements across several generative regimes, followed by a pre-registered test in a
+deliberately dissimilar stochastic system.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item A measured decomposition of unresolved information into a term removable by
+better experiment and a term that is not (\S\ref{sec:decomp}), with both terms
+computed exactly rather than estimated.
+\item A demonstration that the removable term is removable \emph{only under
+intervention}, with the passive case measured exactly over every initial condition
+(\S\ref{sec:passive}).
+\item Evidence that identifiability and predictability are distinct, non-redundant
+axes, with all four quadrants populated by measured systems (\S\ref{sec:quadrants}).
+\item A pre-registered replication on a fourth system---a family of $1{,}500{,}625$
+partially observed Markov chains---that meets all five frozen criteria
+(\S\ref{sec:stochastic}), and in which the unpredictability is aleatoric rather than
+computational.
+\item A negative result of practical consequence: the generator-to-behaviour map for
+elementary cellular automata has no local structure, so search in rule space cannot be
+guided by proximity (\S\ref{sec:landscape}).
+\end{enumerate}
+
+\section{Framework}\label{sec:framework}
+
+Let $\HH$ be a finite set of candidate generators, $G$ a random element of $\HH$ under
+a uniform prior, and $O$ an observation map. Writing $n_c = |O^{-1}(c)|$ for the size of
+the class $c \in \mathrm{im}\,O$, every generator in a class is equiprobable given that
+class, so the residual uncertainty about generator identity is the conditional entropy
+\begin{equation}\label{eq:hgo}
+  H(G \mid O) \;=\; \frac{1}{|\HH|}\sum_{c \in \mathrm{im}\,O} n_c \log_2 n_c
+  \;=\; \mathbb{E}\!\left[\log_2 |P(O)|\right].
+\end{equation}
+This is $0$ exactly when $O$ separates every generator, and $\log_2|\HH|$ when $O$ is
+constant. Every figure reported below as ``bits unresolved'' is this quantity.
+
+We flag one trap explicitly, having fallen into it ourselves. The superficially similar
+$\log_2 \mathbb{E}[|P(O)|] = \log_2\big(|\HH|^{-1}\sum_c n_c^2\big)$ is \emph{not}
+equal to \eqref{eq:hgo}; by Jensen's inequality it is an upper bound, and the two
+differ by up to half a bit in our data. It is the wrong quantity here because it is the
+log of an expected \emph{count}, not an expected \emph{code length}, and does not
+compose additively the way the decomposition below requires.
+
+\paragraph{Per-generator coordinates.}
+Equation~\eqref{eq:hgo} is a single scalar for a whole experiment---an average over the
+random generator. The claims of this paper are about how quantities \emph{vary between
+generators}, so they need per-generator coordinates, and we keep the two levels
+notationally distinct. For an individual $g \in \HH$ write
+\[
+  i_O(g) \;=\; \log_2\big|P_O(g)\big|,
+  \qquad\text{so that}\qquad
+  H(G \mid O) \;=\; \mathbb{E}_G\big[\,i_O(G)\,\big],
+\]
+the mean unresolved generator information being simply the population average of the
+per-generator coordinate. Recovery is one question and prediction is another, so alongside
+it write
+\[
+  p_k(g) \;=\; H\big(Y_{t+k} \,\big|\, O_{\le t},\, G = g\big),
+\]
+where $Y$ is a declared predictive target and $k$ a declared horizon. Then $i_O$ is
+epistemic uncertainty about which mechanism is acting, and $p_k$ is uncertainty about
+what that mechanism will do \emph{with the mechanism known}: different conditional
+entropies answering different questions.
+
+Both coordinates are relative to declarations, and the observation horizon is one of
+them. Everything here is stated with respect to a hypothesis space $\HH$, an observation
+map $O$---including how much of the process $O$ sees---and an admissible class
+$\mathcal{A}$; none of the three may be left implicit. In particular, for a stochastic
+process observed to horizon $T$, equality of the finite-dimensional law
+$\mathcal{L}(Y_{0:T-1} \mid g_1) = \mathcal{L}(Y_{0:T-1} \mid g_2)$ does not imply equality
+of the full process law, so a preimage measured at finite $T$ is an upper bound on the
+preimage under unlimited passive data and must be reported with $T$ attached.
+
+Every two-axis statement below is about the pair $\big(i_O(g), p_k(g)\big)$, not about
+the population scalars, and the thesis is the pair of non-implications
+\begin{equation}\label{eq:nonimp}
+  i_O(g_1) = i_O(g_2) \;\;\not\Longrightarrow\;\; p_k(g_1) = p_k(g_2),
+  \qquad
+  p_k(g_1) = p_k(g_2) \;\;\not\Longrightarrow\;\; i_O(g_1) = i_O(g_2),
+\end{equation}
+which is what criteria C2 and C3 of \S\ref{sec:stochastic} test directly. Where the
+predictive target is deterministic, as for polynomials, $p_k \equiv 0$ and only $i_O$ has
+content; \S\ref{sec:stochastic} works in a setting where both vary.
+
+\paragraph{The decomposition, made exact.}
+Let $\mathcal{A}$ be the family of observations the experimenter is actually permitted
+to perform---the \emph{admissible class}, which encodes what may be intervened on---and
+let
+\[
+  O^\star \;=\; \operatorname*{arg\,min}_{O' \in \mathcal{A}} H(G \mid O') .
+\]
+Define the \emph{intrinsic degeneracy under $\mathcal{A}$} and the
+\emph{observation deficiency of $O$} as
+\[
+  D_\HH(\mathcal{A}) \;=\; H(G \mid O^\star),
+  \qquad
+  \Delta_O \;=\; H(G \mid O) - H(G \mid O^\star) .
+\]
+Then trivially, and with both terms non-negative by construction,
+\begin{equation}\label{eq:decomp}
+  H(G \mid O) \;=\; \underbrace{\Delta_O}_{\text{a bad experiment}}
+  \;+\; \underbrace{D_\HH(\mathcal{A})}_{\text{distinct generators, identical objects}} .
+\end{equation}
+The content of \eqref{eq:decomp} is not the identity, which is definitional, but the
+measured values of its two terms and---critically---the fact that
+$D_\HH(\mathcal{A})$ moves when $\mathcal{A}$ does. Enlarging the admissible class from
+passive observation to intervention can convert intrinsic degeneracy into mere
+deficiency; \S\ref{sec:passive} measures that conversion.
+
+\section{Systems and method}\label{sec:systems}
+
+All results are exact enumerations over finite hypothesis spaces. Nothing below is
+sampled unless explicitly stated.
+
+\paragraph{S1: expressions over $\{1,+,\times\}$.}
+Leaves are the literal $1$; the budget is the number of leaves. We enumerate every
+value reachable at each budget and record, for each integer, the minimum budget at
+which it appears.
+
+\paragraph{S2: elementary cellular automata.}
+A rule is $8$ bits---one output per three-cell neighbourhood---so $|\HH|=256$ and there
+are exactly $8$ bits to recover. Rules act on a periodic ring; we use ring size $64$ for
+observation-length curves and $12$ (giving $4096$ states) where exhaustive state-space
+analysis is required. A rule is constrained by an observation only where that
+observation exercises its neighbourhoods; unexercised entries remain free, so the
+preimage is exactly $2^{8-c}$ for coverage $c$.
+
+\paragraph{S3: hypergraph rewriting.}
+States are sets of ordered tuples; a rule rewrites a matched sub-hypergraph. One step
+applies a maximal non-overlapping set of matches, selected in an order determined by a
+scheduler seed. Graph comparison uses a Weisfeiler--Leman
+hash~\cite{weisfeiler1968}, a sound but incomplete invariant: a hash difference
+proves non-isomorphism, while equality is strong evidence rather than proof. All
+residual figures for S3 are therefore \emph{lower bounds} on distinguishability.
+
+\paragraph{Validation.}
+Three independent checks against known results. Integer complexity in S1 reproduces
+OEIS A005245~\cite{oeis005245} exactly for $n=1,\dots,32$. In S2 the reversible rules
+are recovered as $\{15,51,85,170,204,240\}$, and the $256$ rule numbers collapse to
+$88$ equivalence classes under reflection and colour swap. In the Boolean-closure
+experiment, $\{\wedge,\vee\}$ generates exactly $18$ of the $256$ functions of three
+variables, the free distributive lattice on three generators.
+
+\section{Generation is cheap and already classified}\label{sec:generation}
+
+We record these results mainly to set them aside.
+
+Growth class changes discontinuously when a single primitive is added. Over $18$
+leaves, $\{1,+\}$ reaches exactly $n$ values at budget $n$; adding $\times$ takes the
+count to $404$ and the per-step growth ratio from $1.06$ to $1.37$. For polynomials,
+$\{x,1,+\}$ reaches only degree $\le 1$ at any budget, while $\{x,1,+,\times\}$ reaches
+$12{,}120$ polynomials at budget $10$, degrees $0$ through $5$.
+
+The sharpest transition is Boolean. On three variables, $\{\wedge,\vee\}$ reaches $18$
+of $256$ functions and is stuck there---the monotone functions. $\{\oplus,\wedge\}$
+reaches $128$, the $\mathbb{F}_2$ polynomials with zero constant term. Adding the
+single constant $1$, with no new operation, reaches all $256$: universality crossed by
+one bit.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Gate set & Functions reached (of 256) & \\
+\midrule
+$\{\wedge\}$ & 7 & \\
+$\{\oplus\}$ & 8 & \\
+$\{\wedge,\vee\}$ & 18 & monotone functions \\
+$\{\oplus,\wedge\}$ & 128 & zero constant term \\
+$\{\oplus,\wedge,1\}$ & 256 & universal \\
+$\{\wedge,\neg\}$ & 256 & universal \\
+$\{\uparrow\}$ & 256 & universal \\
+\bottomrule
+\end{tabular}
+\caption{Boolean closure on three variables. The step from $128$ to $256$ costs one
+constant and no new operation.}
+\end{table}
+
+None of this is new. Post's lattice~\cite{post1941} classifies every Boolean clone
+completely, and has since 1941. We report these figures only to establish that the
+apparatus is calibrated, and to make the point that a programme organised around
+``which structures does a primitive set generate'' is re-entering a field that has been
+occupied for eighty-five years.
+
+\section{The identifiability curve and its plateau}\label{sec:decomp}
+
+\subsection{Cellular automata}
+
+Figure-free summary: we compute the mean over all $256$ rules of $\bits$ as a function
+of observation length, for five initial conditions on a $64$-cell ring.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Initial condition & $T{=}1$ & $2$ & $3$ & $5$ & $10$ & $25$ & $100$ & $400$ \\
+\midrule
+single cell   & 4.00 & 1.88 & 1.66 & 1.60 & 1.60 & 1.60 & 1.58 & 1.58 \\
+density $0.02$ & 4.00 & 1.88 & 1.53 & 1.45 & 1.45 & 1.45 & 1.45 & 1.45 \\
+density $0.10$ & 4.00 & 1.88 & 1.53 & 1.45 & 1.44 & 1.44 & 1.44 & 1.44 \\
+density $0.25$ & 3.00 & 0.84 & 0.81 & 0.81 & 0.81 & 0.81 & 0.81 & 0.81 \\
+density $0.50$ & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
+\bottomrule
+\end{tabular}
+\caption{Mean unresolved bits (of $8$) against observation length. The curves flatten
+by $T=3$; the height at which they flatten is set by the initial condition.}
+\label{tab:plateau}
+\end{table}
+
+Two readings. A random half-dense row identifies every rule exactly after a
+\emph{single} step. A single-cell seed leaves $1.58$ bits after $400$ steps, having
+left $1.66$ after three: running $130$ times longer buys $0.08$ bits. On this ring,
+$132$ of $256$ rules are permanently unidentifiable from a single-cell seed at any
+observation length. (The count is mildly width-sensitive: a $201$-cell ring gives
+$134$, so it should be reported with the ring size attached.)
+
+One well-designed step beats four hundred badly designed ones. This is a demonstration
+of infomax experimental design in the sense of Lindley~\cite{lindley1956}, not a new
+principle; what is useful here is that the effect is measured exactly rather than
+argued.
+
+\subsection{Polynomials: the ideal curve and its failure modes}
+
+Let $\HH$ be integer polynomials of degree $\le d$ with coefficients in $[-C,C]$, and
+let $O$ be evaluation at $k$ points. For $d=4$, $C=2$ ($|\HH|=3125$, $11.61$ bits),
+consecutive points give $11.61 \to 9.29 \to 5.75 \to 1.06 \to 0$. Degenerate designs
+never descend: sampling $x=1$ repeatedly is pinned at $7.90$ bits forever, and two
+points repeated at $5.75$.
+
+The threshold arrives earlier than Lagrange interpolation would suggest, and the reason
+is instructive. Two candidates agree at $k$ points only if their difference---whose
+coefficients lie in $[-2C,2C]$---has $k$ roots there, and a small coefficient box
+cannot supply the large coefficients such a product requires.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+Degree & $C$ & $|\HH|$ & Points to identify & Lagrange bound \\
+\midrule
+3 & 1 & 81 & 3 & 4 \\
+3 & 2 & 625 & 4 & 4 \\
+4 & 1 & 243 & 4 & 5 \\
+4 & 4 & 59{,}049 & 4 & 5 \\
+6 & 1 & 2{,}187 & 4 & 7 \\
+6 & 2 & 78{,}125 & 4 & 7 \\
+\bottomrule
+\end{tabular}
+\caption{Shrinking the hypothesis class buys data points. Identifiability is a joint
+property of $\HH$ and $O$, never of the object alone.}
+\end{table}
+
+Taking this further, with the design chosen \emph{optimally} rather than merely
+consecutively, a single point suffices: for $|x| \ge 2C+1$ evaluation is injective,
+being positional notation in base $x$ with digits in $[-C,C]$. Thus one sample at
+$x=5$ recovers all $11.61$ bits, while $x=1$ leaves $7.90$ bits unresolved at any
+multiplicity. A single well-chosen observation beats infinitely many badly chosen ones,
+and this is a theorem rather than a tendency.
+
+\subsection{Rewriting: a residual that does not vanish}
+
+$\HH$ is $129$ rewrite rules with left-hand side $\{xy\}$ and a right-hand side of one
+to three edges over $x,y,z$ ($7.01$ bits). Each ran five steps from a triangle seed
+under a fixed scheduler seed.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Observation & Classes & Bits unresolved \\
+\midrule
+final $|E|$ only & 11 & 4.02 \\
+$|E|$ trajectory & 11 & 4.02 \\
+$|E|$ and $|V|$ trajectory & 13 & 3.87 \\
+final degree sequence & 35 & 2.16 \\
+final graph (WL hash) & 78 & 1.09 \\
+full graph trajectory & 78 & 1.09 \\
+\bottomrule
+\end{tabular}
+\caption{Watching the whole trajectory adds nothing over the final state, twice over.
+The curve bottoms out at $1.09$ bits.}
+\end{table}
+
+\subsection{The decomposition}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+System & $|\HH|$ (bits) & Best observation & Residual \\
+\midrule
+Elementary cellular automata & 8.00 & 0.00 & 0.00 \\
+Polynomials, $d\le4$, $C=2$ & 11.61 & 0.00 & 0.00 \\
+Hypergraph rewriting & 7.01 & 1.09 & 1.09 \\
+\bottomrule
+\end{tabular}
+\caption{Equation~\eqref{eq:decomp} evaluated. For the first two systems every
+unresolved bit was a bad experiment. For the third, $1.09$ bits survive perfect
+observation: distinct rules generating identical objects.}
+\end{table}
+
+\section{The forward map is not always a function}\label{sec:scheduler}
+
+A formulation of the generative hypothesis we have seen proposed is $C=G(P,R,I)$:
+complexity as a function of primitives, relations, and iteration. In S3 this is false.
+
+Applying the same rule to the same seed for the same number of steps, varying only the
+order in which matches are applied, produced provably non-isomorphic outputs in $2$ of
+$8$ rules tested---five distinct outcomes in twelve runs for one rule, three for
+another. The forward map therefore requires the scheduler as an argument,
+\[
+  C = G(P,R,I,S),
+\]
+and whether a given rule is order-independent---causal invariance, in the sense
+of~\cite{wolfram2020}---is not decidable in general, confluence being undecidable even for
+restricted rewriting classes~\cite{jacquemard2003}, though decidable for others. An inverse problem cannot be posed
+for a forward map that is not a function, so the scheduler must be carried explicitly
+or held fixed and declared. We hold it fixed and declare it.
+
+We note in passing that growth in S3 is trivially predictable: a right-hand side of $k$
+edges gives growth of exactly $k$ per step ($1.00$, $2.00$, $3.00$, $4.00$ measured).
+The interesting structure is not in the growth.
+
+\section{Without intervention}\label{sec:passive}
+
+Every identifiability win above came from \emph{setting the system's state}: choosing a
+random initial row, choosing evaluation points. These are interventions in the sense of
+Pearl~\cite{pearl2009}, not more careful passive observation, which is precisely why
+they were cheap. Equation~\eqref{eq:decomp} carries an index for this reason, and this
+section measures what the index costs.
+
+We take the same $256$ automata on a $12$-cell ring and forbid the observer to touch
+anything: nature picks the initial state, and the observer arrives---possibly long
+after the transient has died---and watches. Computed exactly over all $4096$ starts for
+every rule.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Regime & Bits unresolved & Fully identified \\
+\midrule
+Intervene: choose the state, watch one step & 0.00 & 100\% \\
+Passive: nature picks, observer arrives at $t=0$ & 0.51 & 66.9\% \\
+Passive: nature picks, observer arrives late & 2.96 & 20.6\% \\
+\bottomrule
+\end{tabular}
+\caption{The cost of not being allowed to intervene. A state handed to the observer and
+watched for one step leaves $1.46$ bits; a state the observer chose leaves none.}
+\end{table}
+
+\paragraph{Why watching longer stops helping.}
+A passive observer's entire future is one attractor period; past that the system
+reshows states it has already shown. On this ring $30.2\%$ of starts land on a fixed
+point and $42.0\%$ on a period of $1$ or $2$ (median period $6$, longest $240$). The
+cap on identifiability is the \emph{diversity} of the attractor, not the duration of
+the watch.
+
+\paragraph{The worst case is total.}
+Rules $238$--$255$ leave $7.00$ bits: $128$ rules permanently indistinguishable. Rule
+$255$ drives every state to all-ones and remains there, so the neighbourhood $111$ is
+the only one that ever occurs and seven of the eight table entries are never tested.
+
+\paragraph{Removing an idealisation.}
+Modelling ``nature gives $p$ points'' as a uniform random $p$-subset silently assumes
+the observation points are spread out, whereas real attractors cluster. We therefore
+replaced the model with an explicit driving map, so the observation points are whatever
+its attractor visits.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Model of nature & Mean $p$ & Bits (late) & Identified \\
+\midrule
+Random map on the domain & 2.61 & 1.24 & 69\% \\
+\quad \emph{same $p$, points spread uniformly} & 2.61 & 1.23 & 70\% \\
+Affine contraction $\mathrm{round}(ax+b)$ & 1.23 & 2.56 & 39\% \\
+\quad \emph{same $p$, points spread uniformly} & 1.23 & 2.67 & 40\% \\
+\bottomrule
+\end{tabular}
+\caption{The clustering idealisation survives: spreading the points out is worth $0.01$
+bits in one case and $-0.11$ in the other.}
+\end{table}
+
+The clustering hypothesis was wrong, and the null result is worth stating plainly:
+conditioned on $p$, where the attractor sits barely matters. The damage is in $p$
+itself. A dissipative system has a single fixed point, so $77\%$ of the time the late
+observer sees one value and then that same value forever, and identifiability is
+settled entirely by where it lands---$39\%$ of the time somewhere injective, and
+otherwise nowhere useful, ever.
+
+\paragraph{Consequence.} Passive identifiability is not a smaller number; it is a
+distribution. With intervention, $p$ is a threshold and past it one always wins.
+Without, $p$ only sets the odds, and $p$ is set by the system's own dynamics rather
+than by the observer's patience. In a single-realisation science---one universe, one
+economic history---the mean is not available either. One gets one draw.
+
+\section{The generator-to-behaviour landscape has no local structure}\label{sec:landscape}
+
+Recovering an elementary cellular automaton rule is trivial: from a random initial
+condition the exact rule was recovered for all $256$ rules in a single linear pass over
+the spacetime diagram. No search, no minimum-description-length machinery, no symbolic
+regression.
+
+And the recovered rule licenses no prediction. Taking compressed spacetime size as a
+computable proxy for output complexity, rule $110$ scores $1562$ while its eight
+single-bit neighbours score $145$, $146$, $151$, $308$, $329$, $440$, $783$ and $971$
+--- between $0.09\times$ and $0.62\times$. Across all $2048$ single-bit rule mutations
+the median change is $122$ against a full range of $3083$, and $10.7\%$ of mutations
+move complexity by more than a quarter of that range.
+
+The practical consequence is a negative one. A complexity landscape this rough cannot
+be searched by gradient, hill-climbing, evolutionary, or any other neighbourhood
+method, because proximity in rule space carries no information about proximity in
+behaviour. Proposals for an ``automated primitive-search engine'' that hunts for
+minimal generators must contend with the fact that, in the richest of our systems,
+there is no landscape to climb---and separately, that the answer it would return is
+free anyway.
+
+\section{A fourth system, pre-registered}\label{sec:stochastic}
+
+The three systems above are deterministic, fully observed, and algorithmic. If the
+separation of \S\ref{sec:quadrants} is an artefact of that setting, a stochastic,
+partially observed family should break it.
+
+\paragraph{Exploratory run.}
+A first family---all $3375$ transition matrices on three hidden states with rows drawn
+from $\{0,\frac14,\frac12,\frac34,1\}$, lumped $\{0,1\}\!\to\!a$, $\{2\}\!\to\!b$---was
+run against three criteria fixed in advance. Two passed; the quadrant-support criterion
+\emph{failed}, because under passive observation the identifiable row was empty (one
+generator of $3375$). Allowing the observer to reset the hidden state populated all four
+quadrants, but that was a change of protocol made after seeing the failure, and we report
+it only as the motivation for what follows.
+
+\paragraph{Confirmatory run.}
+We therefore froze a second design before running it: all $35^4 = 1{,}500{,}625$
+transition matrices on \emph{four} hidden states, quarter-grid rows, a balanced $2+2$
+lumping, horizon $T=6$, enumerated completely. Passive means a uniform initial state;
+intervening means the experimenter may initialise each hidden state separately and pool
+the four resulting laws. Metrics are the per-generator coordinates $i_O(g)$ and $p_1(g)$ of
+\S\ref{sec:framework}, with the quadrant thresholds carried over unchanged
+($i_O = 0$; $p_1 < 0.10$ bits/step). Five criteria were fixed: quadrant support at $1\%$
+under intervention (C1); a $10$--$90$ percentile spread of $p_1$ of at least $0.50$ bits
+among identifiable generators (C2); a spread of $i_O$ of at least $1$ bit among generators
+at essentially fixed $p_1$ (C3); an exact finite-horizon observational-equivalence witness with
+$p_1<0.10$ (C4), meaning generators whose $T=6$ observable laws coincide exactly; and at least $1\%$ of generators changing quadrant between protocols
+(C5). C2 and C3 are distributional rather than existence tests, since over $1.5$M
+generators an existence claim is nearly free.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Protocol & id.\ \& pred. & id.\ \& not pred. & not id.\ \& pred. & not id.\ \& not pred. \\
+\midrule
+Passive      & $0.00\%$ & $0.00\%$ & $5.43\%$ & $94.57\%$ \\
+Intervening  & $1.85\%$ & $80.16\%$ & $3.58\%$ & $14.41\%$ \\
+\bottomrule
+\end{tabular}
+\caption{Quadrant occupancy over all $1{,}500{,}625$ generators. Passive $H(G\mid O)$ is
+$3.24$ bits over $303{,}229$ distinct laws; intervening, $1.37$ bits over $1{,}235{,}809$.}
+\end{table}
+
+All five criteria were met. C2 gave a spread of $0.55$ bits, C3 a spread of $12.00$ bits,
+C4 found $81{,}482$ generators sitting in non-singleton equivalence classes under the
+exact $T=6$ observable law while satisfying $p_1 < 0.10$,
+and C5 recorded $82.0\%$ quadrant migration.
+
+Three things are worth drawing out. First, \emph{not one generator of $1{,}500{,}625$ is
+uniquely identified by the passive observation map at horizon $T=6$}---the same empty row
+that failed the exploratory criterion, reproduced on an unrelated family. We have not
+shown that these generators are structurally non-identifiable under unlimited passive
+data; the claim is about the declared observation map, and a longer horizon could only
+shrink the classes. Second, the upper-right quadrant is
+here populated for a reason entirely unlike the automaton case: the generator is known
+exactly and the outcome is still uncertain because the law is stochastic, not because its
+behaviour is undecidable. The same cell is reached by aleatoric and by computational
+routes, which is evidence that the cell is a real category rather than an artefact of one
+mechanism. Third, and we think most consequentially, C5 at $82.0\%$ says quadrant membership is
+largely not a property of the system. The pipeline is
+\[
+  (S, \mathcal{A}, \Sigma, O)
+  \;\longrightarrow\;
+  \big(i_O(g),\, p_k(g)\big)
+  \;\xrightarrow{\ \text{thresholds}\ }\;
+  Q ,
+\]
+so varying $\mathcal{A}$ while holding $S$ fixed moves $Q$ for four generators in five.
+The consequence for how the taxonomy should be read is direct: \emph{identifiable} and
+\emph{predictable} are not intrinsic labels attached to a mechanism. They describe a
+mechanism relative to an observation and intervention regime and a declared prediction
+target. The intervention result of \S\ref{sec:passive} is the special case of this in
+which only the number of bits was tracked, not the regime.
+
+The empty passive row should not be read as a discovery. That state aggregation creates
+observational equivalence classes, and that the inverse lumping problem has no unique
+solution without further conditions, are established results. Ito, Amari and
+Kobayashi~\cite{ito1992} solve precisely the question of when two different Markov chains
+generate the same observed process, by linear algebra on the block structure of the
+transition matrix. What the enumeration adds is the exhaustive
+quantity---not one generator in $1{,}500{,}625$, over a completely enumerated class rather
+than a constructed example---and the contrast with the interventional protocol on the same
+family. The sharper question, under what conditions on the aggregation the identifiable
+set is empty rather than merely small, we leave open and do not claim.
+
+One exact witness from the exploratory family states the point most sharply. Five
+distinct transition matrices induce an identical observable law \emph{at the horizon
+observed}, with predictive entropy of exactly $0.000$ bits per step: $2.32$ bits of
+uncertainty about the cause alongside zero bits of uncertainty about the consequence.
+Whether the five remain equivalent at every horizon we did not test, and do not claim.
+
+\section{Two distinct axes}\label{sec:quadrants}
+
+Identifiability theory grew up in settings where recovering the parameters hands one
+the trajectory, and treats recovery and prediction as a single achievement.
+
+The claim of this paper rests on \S\ref{sec:stochastic} alone. There, a single completely
+enumerated hypothesis class of $1{,}500{,}625$ generators populates all four combinations
+of $i_O(g)$ and $p_1(g)$ under one fixed pair of definitions, with criteria frozen before
+the run---$1.85\%$, $80.16\%$, $3.58\%$ and $14.41\%$ of the class in the four cells. That
+is the evidence for \eqref{eq:nonimp}, and it does not depend on comparing systems to each
+other.
+
+The three deterministic systems are \emph{not} used to establish the entropy-based
+quadrant claim, because for them that coordinate is degenerate: with the generator and the
+current state both known, a deterministic system has $p_k \equiv 0$ by construction, so an
+elementary cellular automaton is trivially ``predictable'' in the sense of $p_k$. What they
+illustrate instead is that several distinct things get conflated under the word
+prediction, and that each fails independently of generator recovery.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{p{2.9cm}p{3.0cm}p{7.6cm}}
+\toprule
+System & Sense of ``prediction'' & What generator recovery does not buy \\
+\midrule
+Bounded polynomials & exact future value & nothing: recovery does deliver prediction here.
+This is the classical case. \\
+\addlinespace
+Elementary cellular automata & \emph{computational} predictability & the generator is
+exactly recoverable in one linear pass, while the generator-to-complexity landscape is
+highly non-smooth ($10.7\%$ of single-bit mutations move compressed output size by over a
+quarter of its full range) and the rule family contains a computationally universal
+member~\cite{cook2004}. Iterating a finite ring is of course always possible; what is not
+available is any shortcut guided by proximity in rule space. \\
+\addlinespace
+Hypergraph rewriting & \emph{forward determinacy} & $1.09$ bits about which rule are
+unresolved while edge growth is exactly $k$ per step; and with the scheduler free, the
+outcome is not a function of the rule at all. \\
+\addlinespace
+Markov family (\S\ref{sec:stochastic}) & $p_1(g)$, entropy of the next observation &
+the load-bearing case: all four cells occupied under one pair of measures. \\
+\bottomrule
+\end{tabular}
+\caption{The deterministic systems illustrate distinct reasons why generator recovery,
+behavioural computation and forward determinacy should not be conflated. They are not
+evidence for the entropy-based quadrant claim, which rests on the last row.}
+\end{table}
+
+We state the resulting claim narrowly, and more narrowly than an earlier draft did.
+Separating a structural axis from a randomness axis and plotting the pair over an
+enumerated space of systems is not new: it is the complexity-entropy diagram of
+computational mechanics~\cite{feldman2008}, discussed in \S\ref{sec:related}. The
+tempting broad version of our claim---that no existing field has considered
+identifiability and prediction separately---is an unsupportable negative. So is a claim of statistical independence: across the stochastic family the two
+axes are weakly \emph{anti}-correlated ($r = -0.30$), which is precisely why we claim
+distinctness rather than independence. What we demonstrate is this:
+\begin{quote}
+Within one finite-preimage framework and one pair of measures, exact enumeration
+produces systems occupying all four combinations of the per-generator coordinates
+$i_O(g)$ and $p_k(g)$; neither coordinate determines the other, in the sense of
+\eqref{eq:nonimp}; and the choice of admissible observation class and of scheduler moves
+a single system between those regimes.
+\end{quote}
+The off-diagonal cells are the interesting ones, and the reason they are rarely
+confronted is structural rather than an oversight: the settings where identifiability
+theory is usually applied are ones in which recovering the parameters does deliver the
+trajectory, so the question of an exactly known and behaviourally useless generator does
+not arise there. Since all four cells are occupied inside one hypothesis class under one
+pair of measures, the thesis needs no cross-system comparison to stand, and we do not rest
+it on one.
+
+\section{Related work}\label{sec:related}
+
+The framing of \S\ref{sec:framework} is structural identifiability
+\cite{bellman1970,walter1997}; the equivalence-class formulation is standard in causal
+discovery, where algorithms return a Markov equivalence class rather than a graph
+\cite{verma1990,pearl2009}, and in automata theory via Myhill--Nerode
+\cite{nerode1958}. Optimal experimental design by information gain is due to Lindley
+\cite{lindley1956}, with the modern active-learning form in \cite{houlsby2011}.
+Generative reachability under a primitive set is universal algebra: Post's lattice
+\cite{post1941} classifies the Boolean case completely. Integer complexity is
+\cite{oeis005245} and \cite[\S F26]{guy2004}. Universality of rule 110 is due to Cook
+\cite{cook2004}; the broader automaton programme is \cite{wolfram2002}. Causal
+invariance in rewriting systems is \cite{wolfram2020}. The Weisfeiler--Leman invariant
+is \cite{weisfeiler1968}, its incompleteness \cite{cai1992}. Algorithmic information
+theory, which sets the ceiling on compressibility arguments generally, is
+\cite{livitanyi2008}.
+
+The closest prior work, and the comparison a reader should make first, is computational
+mechanics. Feldman, McTague and Crutchfield~\cite{feldman2008} plot a measure of
+structural complexity against a measure of randomness over an enumerated space of
+processes---maps of the interval, cellular automata, Ising systems, Markov chains---which
+is the same two-axis move, made eighteen years earlier and over a comparably broad
+sweep of systems. Our vertical coordinate $p_k$ is, in the stationary limit, their
+entropy rate $h_\mu$.
+
+The horizontal coordinates differ, and the difference is the whole of what we add. Their
+statistical complexity $C_\mu$ is the memory of the minimal predictor and is a property of
+the \emph{process}; the $\epsilon$-machine is precisely the canonical representative of an
+observational equivalence class, and computational mechanics proceeds by quotienting that
+class away. Our $i_O(g)$ measures the class itself---how many members of a declared
+hypothesis space $\HH$ remain indistinguishable under a declared observation map $O$---and
+is therefore a property of $g$ relative to $(\HH, O)$ rather than of the process. A process
+can have small $C_\mu$ and large $i_O$, which is exactly the lower-left quadrant of
+\S\ref{sec:quadrants}: a simple minimal predictor that many distinct mechanisms share.
+
+That interventions change identifiability is itself well established: active learning of
+causal models is built on choosing interventions that guarantee it, with optimal strategies
+known~\cite{hauser2014}. Our claim is correspondingly narrow. We are not aware of prior
+work that combines per-generator observational-equivalence size with predictive entropy and
+exhaustively measures how the resulting joint classification migrates under a change in
+admissible interventions---$Q = Q(S, \mathcal{A}, \Sigma, O)$, at $82.0\%$ in
+\S\ref{sec:stochastic}. We make no stronger claim than that.
+
+\section{Limitations}
+
+Identifiability in \S\ref{sec:stochastic} is equality of the finite-dimensional law at
+horizon $T=6$, not of the full process law. Every preimage reported there is therefore an
+upper bound on the preimage available to an observer with unlimited passive data, and the
+empty passive row is a statement about that observation map rather than about structural
+identifiability in the sense of~\cite{ito1992}.
+The stochastic results of \S\ref{sec:stochastic} separate cleanly into an exploratory
+run, whose interventional analysis was post-hoc and is reported as such, and a
+confirmatory run frozen before execution. Only the latter supports the claim. The
+quadrant thresholds ($i_O(g)=0$, $p_1(g)<0.10$) are conventions carried between the two
+rather than optimised, but they remain conventions.
+An earlier version of this manuscript reported $\log_2\mathbb{E}[|P(O)|]$ for two of
+the three systems and $H(G\mid O)$ for the third; the figures here are $H(G\mid O)$
+throughout, which lowers every affected number (the rewriting residual from $1.55$ to
+$1.09$ bits) without changing any qualitative conclusion.
+The hypothesis spaces are small and finite by design, which is what permits exact
+enumeration; nothing here is an asymptotic claim. S3 comparisons use a
+Weisfeiler--Leman invariant, so the $1.09$-bit residual is a lower bound on
+distinguishability and could only grow under a complete test. S3 results hold the
+scheduler seed fixed, which controls the order-dependence of \S\ref{sec:scheduler}
+rather than removing it. The $26{,}624$ figure for minimal expressions of $107$ counts
+ordered trees and so overcounts by commutativity, though not by an order of magnitude.
+Counts of permanently unidentifiable automata are mildly ring-width sensitive ($132$ at
+width $64$, $134$ at width $201$) and should always be reported with the width. The
+compressed-size proxy for output complexity in \S\ref{sec:landscape} is a computable
+stand-in for an uncomputable quantity and is used only for relative comparison between
+neighbouring rules.
+
+\section{Discussion}
+
+The programme this paper argues against---search for the smallest rule generating an
+observed object---fails in two independent ways. In the simplest system it is
+ill-posed: minima are non-unique, unstable, and lack a closed form. In the richest it
+is trivial and unhelpful: the rule is free and predicts nothing.
+
+What replaces it is narrower and testable. Decompose $H(G\mid O)$ by
+Equation~\eqref{eq:decomp}, with the admissible class $\mathcal{A}$ stated explicitly
+rather than left implicit, and report which quadrant of \S\ref{sec:quadrants} the system occupies. All
+three are measurable. The first of those questions has now been answered
+once: \S\ref{sec:stochastic} carries the classification into stochastic, partially
+observed dynamics with a hypothesis class four orders of magnitude larger, under criteria
+fixed in advance. What remains untested is continuous state and continuous time, where
+exact enumeration is unavailable and the preimage must be estimated rather than counted.
+We would want that before claiming the quadrant structure is general.
+
+The broader statement the results now support is that a system has no single degree of
+knowability. What can be known depends on which question is asked---which mechanism is
+acting, or what it will do next---and on what the observer is permitted to do to it.
+
+\paragraph{Reproducibility.}
+All figures are produced by seven self-contained Python scripts requiring only the
+standard library: \texttt{mgs.py} (algebra and reachability), \texttt{mgs\_ca.py}
+(cellular automata), \texttt{mgs\_rewrite.py} (hypergraph rewriting),
+\texttt{mgs\_ident.py} (identifiability curves), \texttt{mgs\_passive.py} (passive
+observation), \texttt{mgs\_stochastic.py} (the exploratory Markov family) and
+\texttt{mgs\_preregistered.py} (the frozen confirmatory run, which additionally requires
+NumPy). All but the last run in a few minutes on one core.
+
+No number in this manuscript is manually trusted. \texttt{audit.py} re-derives every
+quantitative assertion from the script that produces it---recomputing from scratch the few
+that no committed script emitted---and reports each against the value printed here. It
+tags provenance as exhaustive computation, sampled computation, derivation, or recomputed
+in the audit itself, so a reader can see which claims rest on enumeration and which on a
+fixed seed. The current run is $45$ of $45$ claims verified, recorded in
+\texttt{AUDIT.txt}, with the values also emitted to \texttt{RESULTS.txt} in a form
+\LaTeX{} can import directly. Bibliographic and interpretive assertions are outside its
+scope and were checked by hand.
+
+\begin{thebibliography}{99}
+\bibitem{bellman1970} R. Bellman and K. J. {\AA}str\"om. On structural identifiability.
+\emph{Mathematical Biosciences}, 7(3--4):329--339, 1970.
+\bibitem{cai1992} J.-Y. Cai, M. F\"urer, and N. Immerman. An optimal lower bound on the
+number of variables for graph identification. \emph{Combinatorica}, 12(4):389--410, 1992.
+\bibitem{feldman2008} D. P. Feldman, C. S. McTague, and J. P. Crutchfield. The
+organization of intrinsic computation: complexity-entropy diagrams and the diversity of
+natural information processing. \emph{Chaos}, 18(4):043106, 2008.
+\bibitem{cook2004} M. Cook. Universality in elementary cellular automata.
+\emph{Complex Systems}, 15(1):1--40, 2004.
+\bibitem{hauser2014} A. Hauser and P. B\"uhlmann. Two optimal strategies for active
+learning of causal models from interventional data. \emph{International Journal of
+Approximate Reasoning}, 55(4):926--939, 2014.
+\bibitem{ito1992} H. Ito, S.-I. Amari, and K. Kobayashi. Identifiability of hidden Markov
+information sources and their minimum degrees of freedom. \emph{IEEE Transactions on
+Information Theory}, 38(2):324--333, 1992.
+\bibitem{jacquemard2003} F. Jacquemard. Reachability and confluence are undecidable for
+flat term rewriting systems. \emph{Information Processing Letters}, 87(5):265--270, 2003.
+\bibitem{guy2004} R. K. Guy. \emph{Unsolved Problems in Number Theory}. Springer, 3rd
+edition, 2004.
+\bibitem{houlsby2011} N. Houlsby, F. Husz\'ar, Z. Ghahramani, and M. Lengyel. Bayesian
+active learning for classification and preference learning. arXiv:1112.5745, 2011.
+\bibitem{lindley1956} D. V. Lindley. On a measure of the information provided by an
+experiment. \emph{Annals of Mathematical Statistics}, 27(4):986--1005, 1956.
+\bibitem{livitanyi2008} M. Li and P. Vit\'anyi. \emph{An Introduction to Kolmogorov
+Complexity and Its Applications}. Springer, 3rd edition, 2008.
+\bibitem{nerode1958} A. Nerode. Linear automaton transformations.
+\emph{Proceedings of the American Mathematical Society}, 9(4):541--544, 1958.
+\bibitem{oeis005245} OEIS Foundation. Sequence A005245: complexity of $n$, the number
+of 1's required to build $n$ using $+$ and $*$. \url{https://oeis.org/A005245}.
+\bibitem{pearl2009} J. Pearl. \emph{Causality: Models, Reasoning, and Inference}.
+Cambridge University Press, 2nd edition, 2009.
+\bibitem{post1941} E. L. Post. \emph{The Two-Valued Iterative Systems of Mathematical
+Logic}. Annals of Mathematics Studies 5, Princeton University Press, 1941.
+\bibitem{verma1990} T. Verma and J. Pearl. Equivalence and synthesis of causal models.
+In \emph{Proceedings of the Sixth Conference on Uncertainty in Artificial
+Intelligence}, pages 220--227, 1990.
+\bibitem{walter1997} E. Walter and L. Pronzato. \emph{Identification of Parametric
+Models from Experimental Data}. Springer, 1997.
+\bibitem{weisfeiler1968} B. Weisfeiler and A. Leman. A reduction of a graph to a
+canonical form and an algebra arising during this reduction.
+\emph{Nauchno-Technicheskaya Informatsia}, 2(9):12--16, 1968.
+\bibitem{wolfram2002} S. Wolfram. \emph{A New Kind of Science}. Wolfram Media, 2002.
+\bibitem{wolfram2020} S. Wolfram. A class of models with the potential to represent
+fundamental physics. \emph{Complex Systems}, 29(2):107--536, 2020. DOI 10.25088/ComplexSystems.29.2.107.
+\end{thebibliography}
+
+\end{document}
