@@ -210,12 +210,34 @@ cross leave $5.917$---crossing is worse by $1.065$ bits. For the balanced
 $\{0,1\} \mid \{2,3\}$ the original direction holds, $3.799$ against $4.187$. Restricting
 the test to partitions whose blocks are all the same size, it passes $3/3$.
 
-The explanation we favour, and flag as post-hoc, is that coverage was the wrong statistic.
-A singleton block carries no internal ambiguity---the observation already identifies that
-state---so a reset spent there buys nothing, and what matters is how much an intervention
-probes blocks that are internally ambiguous. Crossing correlates with that only when the
-blocks are equal in size. The corrected statement would be about block sizes rather than
-block counts, and we do not yet have it in testable form.
+No replacement conjecture is required, because the exact rule is already available.
+Since each $Z_j$ is a deterministic function of $G$, Proposition~\ref{prop:submod} gives
+$F(A) = H(Z_A)$, so the value of adding reset $j$ to a set $A$ is exactly its conditional
+novelty
+\[
+  \Delta(j \mid A) \;=\; H(Z_j \mid Z_A),
+\]
+and for a pair, $H(Z_i,Z_j) = H(Z_i) + H(Z_j) - I(Z_i;Z_j)$. A pair of interventions is
+valuable when both carry information and little of it is shared. Block crossing was only
+ever a proxy for low redundancy, and Experiment~24 locates where the proxy fails: a reset
+into a singleton observational block is largely redundant, because the observation already
+identifies that state, while two resets inside a large collapsed block can expose
+distinctions passive observation suppresses. That is why the effect reverses on
+$\{0\} \mid \{1,2,3\}$ and holds on balanced partitions.
+
+The selection rule that follows is exact rather than heuristic:
+\[
+  j^\star \;=\; \operatorname*{arg\,max}_{j \notin A}\; H(Z_j \mid Z_A),
+\]
+which is the greedy step of Proposition~\ref{prop:submod} written in the variables that
+make it computable. What remains genuinely open is not the rule but its explanation:
+\emph{which structural features of $(\HH, O)$ make $H(Z_j \mid Z_A)$ large?} Observation
+block size re-enters there as a candidate explanatory variable rather than as the theory.
+A natural refinement to study is the interventional signature partition
+$x \sim_Z y \iff Z_x = Z_y$, which is not the observational partition $\sim_O$: states
+alike under $\sim_O$ but distinct under $\sim_Z$ are exactly the distinctions intervention
+can unlock, and states alike under both are hidden from this experimental family
+altogether.
 
 We record the refutation rather than quietly narrowing the claim, because the conjecture as
 first written was the natural reading of Table~\ref{tab:lattice} and would have been an
@@ -262,8 +284,9 @@ crossing rule, submodularity---measured rather than argued.
 
 The lattice is computed on one family with one lumping, and the striking symmetry of
 Table~\ref{tab:lattice} is a property of that construction. The crossing conjecture is refuted in general and survives only for equal-block
-partitions; the replacement hypothesis about internally ambiguous blocks is post-hoc and
-untested. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact
+partitions; the exact selection rule $\Delta(j \mid A) = H(Z_j \mid Z_A)$ replaces it, but we have no
+structural characterisation of when that quantity is large, which is the open problem this
+paper leaves. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact
 experiment outputs are deterministic functions of the generator; it would need revisiting
 for noisy or sampled observations, where $H(Z_A \mid G) > 0$ and the identity
 $F(A) = H(Z_A)$ fails. Identification is at horizon $T=6$, which is where the partition of this family

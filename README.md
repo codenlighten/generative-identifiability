@@ -93,9 +93,14 @@ relative to an observation and intervention regime and a declared prediction tar
   load-bearing result.
 - **Paper 2** — [`paper2.tex`](paper2.tex) / [`paper2.pdf`](paper2.pdf). *The Information
   Order of Experiments: Intervention Lattices and Generator Identifiability.* The order
-  structure on observations: refinement contracts preimages, informativeness is partial
-  rather than total, the interventions that pay are those crossing the observation's
-  kernel, and information gain is submodular.
+  structure on observations: refinement contracts preimages, and informativeness is
+  partial rather than total &mdash; a single intervention can be *less* identifying than
+  passive observation. Two claims in early drafts did not survive. Submodularity of
+  information gain turned out to be a theorem (Shannon's inequality), not the empirical
+  finding it was first reported as. And a natural conjecture that valuable interventions
+  cross observation blocks is **refuted in general** by a sweep over all 15 partitions of
+  the state space; intervention value is governed by the joint information carried by
+  reset-specific observable laws, `H(Z_A)`, for which block crossing is only a proxy.
 
 ## Running it
 
@@ -117,7 +122,7 @@ python3 audit.py              # re-derives every number in the manuscript
 No number in the manuscript is manually trusted. [`audit.py`](audit.py) re-derives each
 quantitative claim from the script that produces it, recomputing from scratch the few that
 no committed script emitted, and tags provenance as exhaustive computation, sampled
-computation, derivation, or recomputed-in-audit. Current status: **45/45**
+computation, derivation, or recomputed-in-audit. Current status: **77/77**
 ([`AUDIT.txt`](AUDIT.txt)), with values emitted to [`RESULTS.txt`](RESULTS.txt) for direct
 LaTeX import.
 
