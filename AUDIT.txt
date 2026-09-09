@@ -1,0 +1,141 @@
+==============================================================================================================
+CLAIM-BY-CLAIM NUMERICAL AUDIT
+==============================================================================================================
+claim                                                     prov     expected   recomputed  status
+--------------------------------------------------------------------------------------------------------------
+reachable integers, {1,+,*}, budget 18                    EXH           404          404  ok
+growth ratio c[18]/c[17], {1,+,*}                         EXH          1.37        1.365  ok
+Boolean closure {AND,OR} on 3 vars                        EXH            18           18  ok
+Boolean closure {XOR,AND} on 3 vars                       EXH           128          128  ok
+polynomials reachable, {x,1,+,*}, budget 10               EXH         12120        12120  ok
+polynomials reachable, {x,1,+}, budget 10                 EXH            65           65  ok
+integer complexity cost(107)                              AUX            16           16  ok
+integer complexity cost(128)                              AUX            14           14  ok
+cost drops in [1,200]                                     AUX            49           49  ok
+minimal ordered expression trees for 107                  AUX         26624        26624  ok
+integer complexity matches OEIS A005245, n=1..32          AUX          True         True  ok
+reversible elementary rules on the ring                   EXH             6            6  ok
+ECA equivalence classes under reflection+swap             EXH            88           88  ok
+rules recovered from a random initial condition           EXH           256          256  ok
+compressed spacetime span                                 EXH          3083         3083  ok
+single-bit mutations moving C by >25% of span             EXH          10.7         10.7  ok
+rule 110 compressed spacetime size                        EXH          1562         1562  ok
+ECA plateau, single cell, T=400                           EXH          1.58         1.58  ok
+ECA plateau, density 0.50, T=1                            EXH          0.00         0.00  ok
+rules unidentifiable from single-cell seed (W=64)         EXH           132          132  ok
+polynomial curve, consecutive, k=3                        EXH          1.06         1.06  ok
+rewriting residual, full graph trajectory                 EXH          1.09         1.09  ok
+rewriting hypothesis class size                           EXH           129          129  ok
+passive ECA, intervene, one step                          EXH          0.00         0.00  ok
+passive ECA, arrive at t=0                                EXH          0.51         0.51  ok
+passive ECA, arrive late                                  EXH          2.96         2.96  ok
+fully identified, arriving late                           EXH          20.6         20.6  ok
+value of intervention before the system moves             EXH          1.46         1.46  ok
+starts landing on a period-1 attractor                    EXH          30.2         30.2  ok
+starts on period 1 or 2                                   EXH          42.0         42.0  ok
+least identifiable rule, bits unresolved                  EXH          7.00         7.00  ok
+affine contraction, bits late                             SMP          2.56         2.56  ok
+single evaluation point, x=1                              AUX          7.90         7.90  ok
+single evaluation point, x=0                              AUX          9.29         9.29  ok
+single evaluation point, x=5 (injective)                  AUX          0.00         0.00  ok
+pre-registered class size                                 EXH       1500625      1500625  ok
+class size in bits                                        DRV         20.52        20.52  ok
+passive H(G|O)                                            EXH          3.24         3.24  ok
+passive distinct laws                                     EXH        303229       303229  ok
+intervening H(G|O)                                        EXH          1.37         1.37  ok
+intervening distinct laws                                 EXH       1235809      1235809  ok
+C2 spread of p_1                                          EXH          0.55         0.55  ok
+C3 spread of i_O                                          EXH         12.00        12.00  ok
+C4 qualifying generators                                  EXH         81482        81482  ok
+C5 quadrant migration                                     EXH          82.0         82.0  ok
+passive law == mean of the four reset laws                EXH     CONFIRMED    CONFIRMED  ok
+A subset B => i_B <= i_A, no violations                   EXH     CONFIRMED    CONFIRMED  ok
+H(G|O_A), full reset set                                  EXH         1.371        1.371  ok
+H(G|O), passive mixture                                   EXH         3.245        3.245  ok
+H(G|O_A), a single reset                                  EXH         4.504        4.504  ok
+H(G|O_A), two resets within one lump                      EXH         3.356        3.356  ok
+H(G|O_A), two resets crossing the lump                    EXH         2.618        2.618  ok
+identified, two resets crossing the lump                  EXH         58.55        58.55  ok
+value of full intervention over passive                   EXH         1.874        1.874  ok
+generators becoming identifiable                          EXH       1230684      1230684  ok
+generators losing identifiability                         EXH             0            0  ok
+generators moving in the predictive coordinate            EXH             0            0  ok
+information gain submodular                               EXH     CONFIRMED    CONFIRMED  ok
+horizon at which the passive partition stabilises         EXH             6            6  ok
+passive equivalence classes at T=6                        EXH        303229       303229  ok
+passive equivalence classes at T=8                        EXH        303229       303229  ok
+generators with a finite mixed-state set                  EXH          40.8         40.8  ok
+mean i_O of excluded generators                           EXH         2.217        2.217  ok
+mean i_O of retained generators                           EXH         2.325        2.325  ok
+excluded generators terminating at a 20,000-state budget  SMP             0            0  ok
+partition-sweep hypothesis class size                     EXH         10000        10000  ok
+cells where H is non-increasing in coverage               EXH             3            3  ok
+cells tested for the crossing conjecture                  EXH            23           23  ok
+fraction of cells supporting the crossing conjecture      EXH          13.0         13.0  ok
+pre-registered verdict on the crossing conjecture         EXH  NOT SUPPORTED NOT SUPPORTED  ok
+equal-block cells satisfying the conjecture               EXH             3            3  ok
+equal-block cells tested                                  EXH             3            3  ok
+largest H spread across coverage at fixed |A|             EXH         1.065        1.065  ok
+unbalanced partition, coverage 1, H                       EXH         4.852        4.852  ok
+unbalanced partition, coverage 2, H                       EXH         5.917        5.917  ok
+balanced partition, coverage 1, H                         EXH         4.187        4.187  ok
+balanced partition, coverage 2, H                         EXH         3.799        3.799  ok
+pairs satisfying log2|H| - H(G|O_A) = H(Z_A)              DRV            84           84  ok
+H(Z_j) for a reset into a singleton block                 EXH         5.017        5.017  ok
+H(Z_j) for a reset into a three-state block               EXH         6.028        6.028  ok
+mean I(Z_i;Z_j), same observation block                   EXH         4.935        4.935  ok
+mean I(Z_i;Z_j), different blocks                         EXH         5.970        5.970  ok
+reversal gap, individual-entropy term                     EXH         1.011        1.011  ok
+reversal gap, redundancy term                             EXH         0.054        0.054  ok
+balanced gap, individual-entropy term                     EXH         0.000        0.000  ok
+balanced gap, redundancy term                             EXH        -0.387       -0.387  ok
+smallest minimal basis over all partitions                EXH             4            4  ok
+largest minimal basis over all partitions                 EXH             4            4  ok
+partitions whose minimal bases are equicardinal           EXH            14           14  ok
+partitions tested for bases                               EXH            14           14  ok
+smallest r(J) over partitions                             EXH         9.892        9.892  ok
+largest r(J) over partitions                              EXH        13.288       13.288  ok
+H(Z_j|Z_rest), singleton block, partition 0|123           EXH         0.280        0.280  ok
+H(Z_j|Z_rest), three-state block, partition 0|123         EXH         0.902        0.902  ok
+block size vs conditional contribution, violations        EXH             0            0  ok
+partitions compressing, product class                     EXH             0            0  ok
+partitions compressing, tied class                        EXH            14           14  ok
+partitions compressing, size-matched random class         EXH             0            0  ok
+pre-registered Y1 verdict                                 EXH          PASS         PASS  ok
+pre-registered Y2 verdict                                 EXH          PASS         PASS  ok
+minimal basis size in the tied class                      EXH             3            3  ok
+pre-registered Z2 verdict (basis invariance in O)         EXH          FAIL         FAIL  ok
+pre-registered Z3 verdict (cl_G subset cl_Z)              EXH          FAIL         FAIL  ok
+cl_G(A) not subset cl_Z(A), violation count               EXH           181          181  ok
+dependencies in cl_Z absent from cl_G                     EXH             0            0  ok
+FREE class minimal basis                                  EXH     {0,1,2,3}    {0,1,2,3}  ok
+EQUAL class basis invariance                              EXH     invariant    invariant  ok
+PERM class basis invariance                               EXH        VARIES       VARIES  ok
+DERIVED class basis invariance                            EXH        VARIES       VARIES  ok
+RANDOM control basis invariance                           EXH     invariant    invariant  ok
+pre-registered L1 verdict (lumpable creates)              EXH          PASS         PASS  ok
+pre-registered L2 verdict (random control does not)       EXH          PASS         PASS  ok
+dependencies created, lumpable class                      EXH            16           16  ok
+dependencies created, size-matched control                EXH             0            0  ok
+dependencies preserved, tied class                        EXH             8            8  ok
+partitions in which the lumpable class creates            EXH             1            1  ok
+Z3 violations, PERM class                                 EXH           100          100  ok
+Z3 violations, DERIVED class                              EXH            81           81  ok
+Z3 violations, EQUAL class                                EXH             0            0  ok
+identity-tie robustness counterexamples                   EXH             0            0  ok
+pi compatible and suffix laws equal                       EXH           153          153  ok
+pi compatible but suffix laws differ                      EXH             0            0  ok
+suffix laws equal without compatibility                   EXH           358          358  ok
+pre-registered P3 verdict (bare lumpability)              EXH          FAIL         FAIL  ok
+refined criterion matches on all partitions               EXH           yes          yes  ok
+reset pairs tested against the kernel criterion           EXH         11004        11004  ok
+kernel-criterion failures                                 DRV             0            0  ok
+dim ker = 0 under the discrete partition                  EXH           yes          yes  ok
+dim ker > 0 under the balanced partition                  EXH           yes          yes  ok
+dim ker B, lumpable class, balanced partition             EXH         2.000        2.000  ok
+dim ker B, discrete partition, all classes                EXH         0.000        0.000  ok
+non-monotone horizon steps in dim ker                     EXH             0            0  ok
+--------------------------------------------------------------------------------------------------------------
+132 claims audited, 132 ok, 0 needing attention
+
+machine-readable values written to RESULTS.txt
