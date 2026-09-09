@@ -122,7 +122,13 @@ partitions in which the lumpable class creates            EXH             1     
 Z3 violations, PERM class                                 EXH           100          100  ok
 Z3 violations, DERIVED class                              EXH            81           81  ok
 Z3 violations, EQUAL class                                EXH             0            0  ok
+identity-tie robustness counterexamples                   EXH             0            0  ok
+pi compatible and suffix laws equal                       EXH           153          153  ok
+pi compatible but suffix laws differ                      EXH             0            0  ok
+suffix laws equal without compatibility                   EXH           358          358  ok
+pre-registered P3 verdict (bare lumpability)              EXH          FAIL         FAIL  ok
+refined criterion matches on all partitions               EXH           yes          yes  ok
 --------------------------------------------------------------------------------------------------------------
-119 claims audited, 119 ok, 0 needing attention
+125 claims audited, 125 ok, 0 needing attention
 
 machine-readable values written to RESULTS.txt
