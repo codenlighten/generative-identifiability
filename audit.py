@@ -384,6 +384,23 @@ C("E30_P3_VERDICT", "pre-registered P3 verdict (bare lumpability)", "EXH", S30,
 C("E30_P3_REFINED", "refined criterion matches on all partitions", "EXH", S30,
   grab(S30, r"matches dependency creation on all \d+ partitions: (\w+)"), "yes")
 
+# --- E31, the semantic kernel ---
+S31 = "mgs_kernel.py"
+C("E31_K1_PAIRS", "reset pairs tested against the kernel criterion", "EXH", S31,
+  grab(S31, r"([\d,]+) reset pairs tested"), "11004")
+C("E31_K1_FAILURES", "kernel-criterion failures", "DRV", S31,
+  grab(S31, r"reset pairs tested, (\d+) failures"), "0")
+C("E31_K2_DISCRETE_ZERO", "dim ker = 0 under the discrete partition", "EXH", S31,
+  grab(S31, r"discrete partition \(lumpable class\): (\w+)"), "yes")
+C("E31_K2_BALANCED_POSITIVE", "dim ker > 0 under the balanced partition", "EXH", S31,
+  grab(S31, r"balanced partition \(lumpable class\): (\w+)"), "yes")
+C("E31_LUMPABLE_KERNEL_DIM", "dim ker B, lumpable class, balanced partition", "EXH", S31,
+  grab(S31, r"^  01\|23\s+[\d.]+\s+[\d.]+\s+[\d.]+\s+([\d.]+)"), "2.000", 0.0005)
+C("E31_DISCRETE_KERNEL_DIM", "dim ker B, discrete partition, all classes", "EXH", S31,
+  grab(S31, r"^  0\|1\|2\|3\s+([\d.]+)"), "0.000", 0.0005)
+C("E31_K3_NONMONOTONE", "non-monotone horizon steps in dim ker", "EXH", S31,
+  grab(S31, r"non-monotone steps across both classes: (\d+)"), "0")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))

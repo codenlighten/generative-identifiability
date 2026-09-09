@@ -50,8 +50,8 @@ submodular across every triple we can form, which places greedy experiment selec
 familiar footing.
 
 The organising claim is that resolving a mechanism is partition refinement, that the order
-on experiments controls its rate, and that the interventions worth buying are the ones
-that cross distinctions the observation map erases.
+on experiments controls its rate, and that the value of an intervention is the conditional
+information it contributes beyond the experiments already performed.
 \end{abstract}
 
 \section{Introduction}
@@ -480,6 +480,62 @@ partition $0|1|2|3$ is strongly lumpable only vacuously, every block being a sin
 creates nothing because there is nothing for the quotient to collapse. The refinement
 ---lumpable \emph{and} some block of size greater than one---matches dependency creation
 on all $14$ partitions, and we record it as post-hoc.
+
+\paragraph{One equation underneath all three.}
+The three mechanisms are three cases of a single linear condition. Let $b_x$ be the
+observable law of the next $T-1$ symbols from hidden state $x$, and $B_{O,T-1}(G)$ the
+matrix with those rows. Resetting to $s$ and taking one transition leaves the hidden
+distribution $P_s$, so the suffix law is $S_s^{(T)} = P_s B$.
+
+\begin{proposition}[Semantic kernel]\label{prop:kernel}
+For a finite generator $G$, observation map $O$ and horizon $T$,
+\[
+  S_s^{(T)} = S_t^{(T)}
+  \quad\Longleftrightarrow\quad
+  (P_s - P_t)\,B_{O,T-1}(G) = 0
+  \quad\Longleftrightarrow\quad
+  P_s - P_t \in \ker B_{O,T-1}(G).
+\]
+\end{proposition}
+\begin{proof}
+$S_s = P_s B$ and $S_t = P_t B$, so $S_s = S_t$ iff $(P_s - P_t)B = 0$.
+\end{proof}
+
+Each earlier mechanism is a case. An \emph{identity tie} has $P_s - P_t = 0$, which lies
+in every kernel---so its robustness across all $O$ and $T$ is immediate, and needs no
+appeal to behaviour. A \emph{permutation tie} $P_t = P_s \Pi$ survives iff
+$P_s(I - \Pi)B = 0$, which is strictly weaker than the behavioural compatibility
+$\Pi B = B$ we tested in Experiment~30: compatibility forces each moved state's law to
+agree separately, whereas the kernel condition needs only their $P_s$-weighted mixture to
+cancel. That is what the $358$ agreements without compatibility were---weighted
+cancellation, not coincidence. \emph{Lumpability} is the case $P_i \ne P_j$ with
+$P_i - P_j \in \ker B$: the rows differ in a direction the observation is blind to.
+Verified over $11{,}004$ reset pairs with zero failures, as an implementation check.
+
+\paragraph{Blindness is structural or transient.}
+$\dim \ker B$ measures how many directions of hidden transition behaviour the observation
+cannot see, and it separates the classes sharply. Under the discrete partition, where every
+state is its own block, it is $0$ for every generator of every class: full observation is
+blind to nothing. Under the balanced partition the lumpable class has $\dim \ker B = 2$
+for all $32$ generators tested, at horizons $T = 3$, $5$ and $7$ alike, and the kernel is
+spanned by exactly $e_0 - e_1$ and $e_2 - e_3$---the within-block differences, one per
+block beyond the first member.
+
+The contrast with an unconstrained class is the point. For FREE generators under the same
+partition the kernel dimensions are distributed $\{2\!:\!6,\ 1\!:\!17,\ 0\!:\!10\}$ at
+$T=3$ and contract to $\{2\!:\!6,\ 1\!:\!14,\ 0\!:\!13\}$ by $T=5$, then stop. So
+kernels contract with horizon---non-increasing across $T = 2, \dots, 6$ with zero
+exceptions---but the lumpable kernel does not contract at all. There are two kinds of
+observational blindness: \emph{transient}, removable by watching longer until it settles,
+and \emph{structural}, which no horizon removes. That is the linear-algebraic counterpart
+of the preimage stabilisation at $T^\star$ reported in~\cite[\S9]{paper1}: preimages
+contract over candidate generators, kernels contract over hidden-state directions, and both
+reach a floor.
+
+Proposition~\ref{prop:kernel} also gives the robust/fragile distinction a definition rather
+than a label: a dependency is \emph{robust} when its difference vector lies in
+$\ker B_{O,T}$ for every admissible $O$, which identity ties satisfy because that vector is
+zero, and \emph{fragile} when membership varies with $O$.
 
 \paragraph{Robust and fragile dependencies.}
 The two failures of Experiment~28 turn out to be one phenomenon. Breaking its $181$
