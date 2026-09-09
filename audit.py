@@ -229,6 +229,33 @@ C("E21_KEPT_MEAN_IO", "mean i_O of retained generators", "EXH", E,
 C("E21_TERMINATED_AT_20K", "excluded generators terminating at a 20,000-state budget",
   "SMP", E, grab(E, r"20,000-state budget, (\d+) terminated"), "0")
 
+# --- E24, the observation-partition sweep behind Paper 2's refutation ---
+Q = "mgs_partitions.py"
+C("E24_CLASS_SIZE", "partition-sweep hypothesis class size", "EXH", Q,
+  grab(Q, r"\|H\| = ([\d,]+) generators"), "10000")
+C("E24_X1_CELLS_OK", "cells where H is non-increasing in coverage", "EXH", Q,
+  grab(Q, r"(\d+)/\d+ cells = "), "3")
+C("E24_X1_CELLS_TOTAL", "cells tested for the crossing conjecture", "EXH", Q,
+  grab(Q, r"\d+/(\d+) cells = "), "23")
+C("E24_X1_FRACTION", "fraction of cells supporting the crossing conjecture", "EXH", Q,
+  grab(Q, r"cells = ([\d.]+)%"), "13.0", 0.05)
+C("E24_X1_VERDICT", "pre-registered verdict on the crossing conjecture", "EXH", Q,
+  grab(Q, r"cells = [\d.]+%\s+(NOT SUPPORTED|SUPPORTED)"), "NOT SUPPORTED")
+C("E24_X2_EQUAL_BLOCK_OK", "equal-block cells satisfying the conjecture", "EXH", Q,
+  grab(Q, r"equal-block partitions only: (\d+)/"), "3")
+C("E24_X2_EQUAL_BLOCK_TOTAL", "equal-block cells tested", "EXH", Q,
+  grab(Q, r"equal-block partitions only: \d+/(\d+)"), "3")
+C("E24_X3_MAX_SPREAD", "largest H spread across coverage at fixed |A|", "EXH", Q,
+  grab(Q, r"across coverage at fixed \|A\|: ([\d.]+) bits"), "1.065", 0.005)
+C("E24_REVERSAL_COV1", "unbalanced partition, coverage 1, H", "EXH", Q,
+  grab(Q, r"partition 0\|123, \|A\|=2, cov1:([\d.]+)"), "4.852", 0.005)
+C("E24_REVERSAL_COV2", "unbalanced partition, coverage 2, H", "EXH", Q,
+  grab(Q, r"partition 0\|123, \|A\|=2, cov1:[\d.]+, cov2:([\d.]+)"), "5.917", 0.005)
+C("E24_BALANCED_COV1", "balanced partition, coverage 1, H", "EXH", Q,
+  grab(Q, r"^    01\|23\s+\|A\|=2\s+1\s+([\d.]+)"), "4.187", 0.005)
+C("E24_BALANCED_COV2", "balanced partition, coverage 2, H", "EXH", Q,
+  grab(Q, r"^    01\|23\s+\|A\|=2\s+2\s+([\d.]+)"), "3.799", 0.005)
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))
