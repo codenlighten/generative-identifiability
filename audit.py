@@ -183,6 +183,52 @@ C("E20_C3_SPREAD_IO", "C3 spread of i_O", "EXH", S, grab(S, r"C3 .*\(([\d.]+), n
 C("E20_C4_GENERATORS", "C4 qualifying generators", "EXH", S, grab(S, r"C4 .*\(([\d,]+) generators\)"), "81482")
 C("E20_C5_MIGRATION", "C5 quadrant migration", "EXH", S, grab(S, r"C5 .*\(([\d.]+)%\)"), "82.0", 0.05)
 
+# --- E22/E23, lattice and horizon (new in Paper 1: T* and the exact migration) ---
+L = "mgs_lattice.py"
+C("E22_MIXTURE_IDENTITY", "passive law == mean of the four reset laws", "EXH", L,
+  grab(L, r"reset laws, exactly: (\w+)"), "CONFIRMED")
+C("E22_CONTAINMENT", "A subset B => i_B <= i_A, no violations", "EXH", L,
+  grab(L, r"i_B\(g\) <= i_A\(g\) for every generator: (\w+)"), "CONFIRMED")
+C("E22_H_FULL_INTERVENTION", "H(G|O_A), full reset set", "EXH", L,
+  grab(L, r"^  \{0,1,2,3\}\s+([\d.]+)"), "1.371", 0.005)
+C("E22_H_PASSIVE", "H(G|O), passive mixture", "EXH", L,
+  grab(L, r"^  passive \(mixture\)\s+([\d.]+)"), "3.245", 0.005)
+C("E22_H_SINGLETON", "H(G|O_A), a single reset", "EXH", L,
+  grab(L, r"^  \{0\}\s+([\d.]+)"), "4.504", 0.005)
+C("E22_H_WITHIN_LUMP", "H(G|O_A), two resets within one lump", "EXH", L,
+  grab(L, r"^  \{0,1\}\s+([\d.]+)"), "3.356", 0.005)
+C("E22_H_CROSS_LUMP", "H(G|O_A), two resets crossing the lump", "EXH", L,
+  grab(L, r"^  \{0,2\}\s+([\d.]+)"), "2.618", 0.005)
+C("E22_IDENT_CROSS_LUMP", "identified, two resets crossing the lump", "EXH", L,
+  grab(L, r"^  \{0,2\}\s+[\d.]+\s+[\d,]+\s+([\d.]+)%"), "58.55", 0.05)
+C("E22_VALUE_OF_INTERVENTION", "value of full intervention over passive", "EXH", L,
+  grab(L, r"= ([\d.]+) bits"), "1.874", 0.005)
+C("E22_BECAME_IDENTIFIABLE", "generators becoming identifiable", "EXH", L,
+  grab(L, r"became identifiable ([\d,]+)"), "1230684")
+C("E22_LOST_IDENTIFIABILITY", "generators losing identifiability", "EXH", L,
+  grab(L, r"lost identifiability (\d+)"), "0")
+C("E22_PREDICTIVE_MOVED", "generators moving in the predictive coordinate", "EXH", L,
+  grab(L, r"predictive coordinate moved (\d+)"), "0")
+C("E22_SUBMODULAR", "information gain submodular", "EXH", L,
+  grab(L, r"diminishing returns\): (\w+)"), "CONFIRMED")
+C("E23_TSTAR", "horizon at which the passive partition stabilises", "EXH", L,
+  grab(L, r"CONFIRMED, T\* = (\d+)"), "6")
+C("E23_CLASSES_T6", "passive equivalence classes at T=6", "EXH", L,
+  grab(L, r"^    6\s+[\d.]+\s+([\d,]+)"), "303229")
+C("E23_CLASSES_T8", "passive equivalence classes at T=8", "EXH", L,
+  grab(L, r"^    8\s+[\d.]+\s+([\d,]+)"), "303229")
+
+# --- E21, the C_mu comparison ---
+E = "mgs_epsilon.py"
+C("E21_EPSILON_BUILT_PCT", "generators with a finite mixed-state set", "EXH", E,
+  grab(E, r"built for \d+ \(([\d.]+)%\)"), "40.8", 0.05)
+C("E21_EXCLUDED_MEAN_IO", "mean i_O of excluded generators", "EXH", E,
+  grab(E, r"excluded n=\s*\d+\s+mean i_O = ([\d.]+)"), "2.217", 0.005)
+C("E21_KEPT_MEAN_IO", "mean i_O of retained generators", "EXH", E,
+  grab(E, r"kept\s+n=\s*\d+\s+mean i_O = ([\d.]+)"), "2.325", 0.005)
+C("E21_TERMINATED_AT_20K", "excluded generators terminating at a 20,000-state budget",
+  "SMP", E, grab(E, r"20,000-state budget, (\d+) terminated"), "0")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))

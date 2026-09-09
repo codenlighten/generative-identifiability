@@ -564,16 +564,29 @@ and C5 recorded $82.0\%$ quadrant migration.
 
 Three things are worth drawing out. First, \emph{not one generator of $1{,}500{,}625$ is
 uniquely identified by the passive observation map at horizon $T=6$}---the same empty row
-that failed the exploratory criterion, reproduced on an unrelated family. We have not
-shown that these generators are structurally non-identifiable under unlimited passive
-data; the claim is about the declared observation map, and a longer horizon could only
-shrink the classes. Second, the upper-right quadrant is
+that failed the exploratory criterion, reproduced on an unrelated family. A longer horizon does not help, and we
+measured rather than assumed this. Sweeping $T = 1,\dots,8$ under the passive protocol,
+the partition refines to $303{,}229$ classes at $T=6$ and then stops: $303{,}229$ again at
+$T=7$ and at $T=8$, with $H(G\mid O_T) = 3.245$ bits throughout and no generator uniquely
+identified at any horizon. The observed stabilisation point is $T^\star = 6$, which is the
+horizon Experiment~20 fixed in advance. Stability through $T=8$ is not a proof of
+stabilisation for all $T$---that requires the finite-rank argument implicit
+in~\cite{ito1992}---but it removes the possibility that the empty passive row is an
+artefact of looking for too short a time. Second, the upper-right quadrant is
 here populated for a reason entirely unlike the automaton case: the generator is known
 exactly and the outcome is still uncertain because the law is stochastic, not because its
 behaviour is undecidable. The same cell is reached by aleatoric and by computational
 routes, which is evidence that the cell is a real category rather than an artefact of one
-mechanism. Third, and we think most consequentially, C5 at $82.0\%$ says quadrant membership is
-largely not a property of the system. The pipeline is
+mechanism. Third, C5 at $82.0\%$ says quadrant membership is largely not a property of the system.
+The migration is worth stating exactly, because its shape is constrained by the design:
+$1{,}230{,}684$ generators become identifiable, \emph{zero} lose identifiability, and
+\emph{zero} move in the predictive coordinate. That $p_1$ does not move is by
+construction---we evaluate it under the uniform operating condition in both protocols so
+that only the identification channel varies---so migration here is necessarily
+one-dimensional and one-directional. The claim is therefore narrower than ``quadrant
+membership is regime-dependent'' in a two-dimensional sense: it is the identifiability
+coordinate that is regime-dependent, and the predictive coordinate was held fixed and
+could not have moved. The pipeline is
 \[
   (S, \mathcal{A}, \Sigma, O)
   \;\longrightarrow\;
@@ -711,6 +724,21 @@ is therefore a property of $g$ relative to $(\HH, O)$ rather than of the process
 can have small $C_\mu$ and large $i_O$, which is exactly the lower-left quadrant of
 \S\ref{sec:quadrants}: a simple minimal predictor that many distinct mechanisms share.
 
+The two coordinates in fact differ in domain of definition, not merely in value. $i_O(g)$
+is a finite integer for every member of a finite hypothesis class, by construction.
+$C_\mu$ is a Shannon entropy over causal states, and for a hidden Markov process those
+states are, as Jurgens and Crutchfield show, generically infinite in
+number~\cite{jurgens2021}: finite-state generators produce processes requiring an
+uncountable infinity of predictive features, for which the finite entropy must be replaced
+by a statistical complexity \emph{dimension}. We observe this directly. Constructing the
+mixed-state presentation for the $3375$-generator exploratory family of
+\S\ref{sec:stochastic}, only $40.8\%$ terminate within a $400$-state budget; of $60$
+excluded generators re-run at a $20{,}000$-state budget, none terminated. The excluded set
+is not otherwise unusual---its mean $i_O$ is $2.217$ bits against $2.325$ for the
+retained---so this is a property of $C_\mu$'s constructibility, not of a strange corner of
+the class. Computational mechanics has the machinery for that case; our point is that it
+is needed there and not for $i_O$.
+
 That interventions change identifiability is itself well established: active learning of
 causal models is built on choosing interventions that guarantee it, with optimal strategies
 known~\cite{hauser2014}. Our claim is correspondingly narrow. We are not aware of prior
@@ -722,10 +750,12 @@ admissible interventions---$Q = Q(S, \mathcal{A}, \Sigma, O)$, at $82.0\%$ in
 \section{Limitations}
 
 Identifiability in \S\ref{sec:stochastic} is equality of the finite-dimensional law at
-horizon $T=6$, not of the full process law. Every preimage reported there is therefore an
-upper bound on the preimage available to an observer with unlimited passive data, and the
-empty passive row is a statement about that observation map rather than about structural
-identifiability in the sense of~\cite{ito1992}.
+horizon $T=6$, not of the full process law, so every preimage reported there is formally an
+upper bound on the preimage available with unlimited passive data. The horizon sweep
+narrows that gap considerably---the partition is unchanged at $T=7$ and $T=8$---but
+stability over a finite window is evidence, not proof, and the empty passive row remains a
+statement about the declared observation map rather than about structural identifiability
+in the sense of~\cite{ito1992}.
 The stochastic results of \S\ref{sec:stochastic} separate cleanly into an exploratory
 run, whose interventional analysis was post-hoc and is reported as such, and a
 confirmatory run frozen before execution. Only the latter supports the claim. The
@@ -771,13 +801,15 @@ knowability. What can be known depends on which question is asked---which mechan
 acting, or what it will do next---and on what the observer is permitted to do to it.
 
 \paragraph{Reproducibility.}
-All figures are produced by seven self-contained Python scripts requiring only the
+All figures are produced by nine self-contained Python scripts requiring only the
 standard library: \texttt{mgs.py} (algebra and reachability), \texttt{mgs\_ca.py}
 (cellular automata), \texttt{mgs\_rewrite.py} (hypergraph rewriting),
 \texttt{mgs\_ident.py} (identifiability curves), \texttt{mgs\_passive.py} (passive
 observation), \texttt{mgs\_stochastic.py} (the exploratory Markov family) and
-\texttt{mgs\_preregistered.py} (the frozen confirmatory run, which additionally requires
-NumPy). All but the last run in a few minutes on one core.
+\texttt{mgs\_preregistered.py} (the frozen confirmatory run),
+\texttt{mgs\_epsilon.py} (the mixed-state construction behind the $C_\mu$ comparison of
+\S\ref{sec:related}) and \texttt{mgs\_lattice.py} (the horizon sweep). The last two of
+these additionally require NumPy; all but those run in a few minutes on one core.
 
 No number in this manuscript is manually trusted. \texttt{audit.py} re-derives every
 quantitative assertion from the script that produces it---recomputing from scratch the few
@@ -813,6 +845,9 @@ flat term rewriting systems. \emph{Information Processing Letters}, 87(5):265--2
 edition, 2004.
 \bibitem{houlsby2011} N. Houlsby, F. Husz\'ar, Z. Ghahramani, and M. Lengyel. Bayesian
 active learning for classification and preference learning. arXiv:1112.5745, 2011.
+\bibitem{jurgens2021} A. M. Jurgens and J. P. Crutchfield. Divergent predictive states:
+the statistical complexity dimension of stationary, ergodic hidden Markov processes.
+arXiv:2102.10487, 2021.
 \bibitem{lindley1956} D. V. Lindley. On a measure of the information provided by an
 experiment. \emph{Annals of Mathematical Statistics}, 27(4):986--1005, 1956.
 \bibitem{livitanyi2008} M. Li and P. Vit\'anyi. \emph{An Introduction to Kolmogorov
