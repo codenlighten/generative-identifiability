@@ -13,7 +13,7 @@ abstract: >-
   Markov chains.
 authors:
   - family-names: Ward
-    given-names: Greg
+    given-names: Gregory J.
     email: greg@smartledger.technology
 repository-code: https://github.com/codenlighten/generative-identifiability
 license:
@@ -47,7 +47,7 @@ preferred-citation:
     between threshold-defined regimes.
   authors:
     - family-names: Ward
-      given-names: Greg
+      given-names: Gregory J.
       email: greg@smartledger.technology
   year: 2026
   month: 9
