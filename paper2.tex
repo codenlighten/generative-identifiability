@@ -10,6 +10,7 @@
 
 \newtheorem{proposition}{Proposition}
 \newtheorem{definition}[proposition]{Definition}
+\newtheorem{corollary}[proposition]{Corollary}
 \newcommand{\HH}{\ensuremath{\mathcal{H}}}
 
 \title{\bf The Information Order of Experiments:\\
@@ -512,20 +513,50 @@ cancellation, not coincidence. \emph{Lumpability} is the case $P_i \ne P_j$ with
 $P_i - P_j \in \ker B$: the rows differ in a direction the observation is blind to.
 Verified over $11{,}004$ reset pairs with zero failures, as an implementation check.
 
+\begin{proposition}[Horizon monotonicity]\label{prop:mono}
+$\ker B_{O,T+1} \subseteq \ker B_{O,T}$, so $\dim \ker B_{O,T}$ is non-increasing in $T$.
+\end{proposition}
+\begin{proof}
+Deleting the final observation is a linear marginalisation $M_T$ with
+$B_{T-1} = B_T M_T$. If $vB_T = 0$ then $vB_{T-1} = vB_T M_T = 0$.
+\end{proof}
+
+\begin{corollary}[Full observation]\label{cor:inj}
+If $O$ is injective then $\ker B_{O,T} = \{0\}$ for every $T \ge 1$.
+\end{corollary}
+\begin{proof}
+Row $x$ of $B_T$ is supported on strings beginning with $O(x)$. For $x \ne y$ those first
+symbols differ, so the supports are disjoint and the rows are independent: $\operatorname{rank} B_T = n$.
+\end{proof}
+
+\begin{proposition}[Lumpable quotient kernel]\label{prop:lump}
+If $O$ induces a $k$-block partition of $n$ states and the chain is strongly lumpable with
+respect to it, then $\operatorname{rank} B_{O,T} = k$ and $\dim \ker B_{O,T} = n-k$, with
+kernel spanned by the within-block state differences $e_x - e_y$, $x,y$ in a common block.
+\end{proposition}
+\begin{proof}
+Strong lumpability makes the observable law identical for states sharing a block, so rows
+within a block coincide, giving $\operatorname{rank} \le k$. Rows from different blocks are
+supported on strings with different first symbols, hence independent, giving equality.
+Rank--nullity supplies the dimension, and within-block differences are $n-k$ independent
+kernel vectors.
+\end{proof}
+
 \paragraph{Blindness is structural or transient.}
 $\dim \ker B$ measures how many directions of hidden transition behaviour the observation
-cannot see, and it separates the classes sharply. Under the discrete partition, where every
-state is its own block, it is $0$ for every generator of every class: full observation is
-blind to nothing. Under the balanced partition the lumpable class has $\dim \ker B = 2$
-for all $32$ generators tested, at horizons $T = 3$, $5$ and $7$ alike, and the kernel is
-spanned by exactly $e_0 - e_1$ and $e_2 - e_3$---the within-block differences, one per
-block beyond the first member.
+cannot see, and it separates the classes sharply. Two of its values are settled in advance. Under the discrete partition it is $0$ for every
+generator of every class, as Corollary~\ref{cor:inj} requires; under the balanced partition
+the lumpable class has $\dim \ker B = 2$ for all $32$ generators at horizons $T = 3$, $5$
+and $7$ alike, with kernel spanned by exactly $e_0 - e_1$ and $e_2 - e_3$, which is
+Proposition~\ref{prop:lump} at $n=4$, $k=2$. The suspiciously exact $2.000$ was exact
+because it had to be. We report both as implementation checks.
 
 The contrast with an unconstrained class is the point. For FREE generators under the same
 partition the kernel dimensions are distributed $\{2\!:\!6,\ 1\!:\!17,\ 0\!:\!10\}$ at
-$T=3$ and contract to $\{2\!:\!6,\ 1\!:\!14,\ 0\!:\!13\}$ by $T=5$, then stop. So
-kernels contract with horizon---non-increasing across $T = 2, \dots, 6$ with zero
-exceptions---but the lumpable kernel does not contract at all. There are two kinds of
+$T=3$ and contract to $\{2\!:\!6,\ 1\!:\!14,\ 0\!:\!13\}$ by $T=5$, then stop. Kernels contract with horizon by
+Proposition~\ref{prop:mono}---measured non-increasing across $T = 2, \dots, 6$ with zero
+exceptions, again a check rather than a finding---while the lumpable kernel does not
+contract at all, being pinned at $n-k$. There are two kinds of
 observational blindness: \emph{transient}, removable by watching longer until it settles,
 and \emph{structural}, which no horizon removes. That is the linear-algebraic counterpart
 of the preimage stabilisation at $T^\star$ reported in~\cite[\S9]{paper1}: preimages
@@ -560,8 +591,11 @@ and choosing interventions to secure identifiability is well developed in causal
 where optimal strategies are known~\cite{hauser2014}. The greedy guarantee for submodular
 objectives is~\cite{nemhauser1978}. What we contribute is not a new criterion but an
 exactly enumerated lattice: every experiment in a finite family, every containment relation
-checked rather than assumed, and the resulting empirical facts---incomparability, the
-crossing rule, submodularity---measured rather than argued.
+checked rather than assumed. Of the facts we first took to be empirical, submodularity is a
+theorem (Proposition~\ref{prop:submod}) and the crossing rule is refuted; what survives as
+measurement is the incomparability of partial interventions with passive observation, the
+origins of redundancy, and the kernel dimensions outside the cases
+Propositions~\ref{prop:mono}--\ref{prop:lump} settle.
 
 \section{Limitations}
 
@@ -592,10 +626,10 @@ with perfect resolution at $[g]_\Pi = \{g\}$ and irreducible ambiguity when the 
 order bottoms out while $|[g]_\Pi| > 1$. Three structures sit on top of one another:
 generator space is partitioned by an observation; the information order says which
 partitions refine which; and submodularity controls how efficiently refinements can be
-bought under a budget. What the measurements add is that the rate of
-contraction is controlled by the order on experiments, that the order is partial rather
-than total---so more control is not uniformly more information---and that the experiments
-worth buying are the ones that cross the distinctions the observation map erases.
+bought under a budget. What the measurements add is that the rate of contraction is controlled by the order on
+experiments, that the order is partial rather than total---so more control is not
+uniformly more information---and that the value of an additional experiment is the
+conditional information it contributes beyond those already performed.
 
 \paragraph{Reproducibility.}
 \texttt{mgs\_lattice.py} produces the intervention-order figures and
