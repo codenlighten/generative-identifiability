@@ -42,9 +42,10 @@ $I(G; O_I \mid O_P)$. Informativeness is genuinely partial, not total: a single 
 leaves $4.504$ bits where passive observation leaves $3.245$, so one intervention is
 \emph{worse} than watching, while two are better. Which two matters enormously---two resets inside one observational
 lump identify $0\%$ of the class, two that cross it identify $58.55\%$, at identical
-cost---though a sweep over all $15$ partitions of the state space shows the crossing rule
-holds only when the observation's blocks are equal in size, and reverses when they are
-not. And information gain is
+cost---but crossing is not the rule. A sweep over all $15$ partitions refutes it, and the
+exact criterion is conditional information: the value of adding reset $j$ to a set $A$ is
+$H(Z_j \mid Z_A) = H(Z_j) - I(Z_j; Z_A)$, intrinsic information less what is already
+known. And information gain is
 submodular across every triple we can form, which places greedy experiment selection on
 familiar footing.
 
@@ -442,6 +443,43 @@ $Z_2 \leftrightarrow Z_3$ and their extensions, and they appear under \emph{one}
 $14$ partitions---the balanced one the class was built for. Under any other observation the
 lumpability does not hold and nothing is created. The effect is the quotient matching the
 constraint, not the constraint alone.
+
+\paragraph{A criterion for survival.}
+The robust/fragile split is a taxonomy, not a criterion. Decomposing a reset law by its
+first symbol,
+\[
+  Z_s^{(T)} \;=\; \delta_{O(s)} \otimes \sum_x P_{sx}\, Z_x^{(T-1)},
+\]
+makes the mechanism visible and suggests one. Under an identity tie $R_i = R_j$ the two
+sums agree term by term for every $O$ and every $T$, so robustness is provable rather than
+observed; we ran it as an implementation check and found $0$ counterexamples over $2002$
+generator--partition pairs. Under a permutation tie $R_j = \pi(R_i)$ the comparison is
+$\sum_y P_{iy} Z_{\pi(y)}^{(T-1)}$ against $\sum_y P_{iy} Z_y^{(T-1)}$, which agree when
+$\pi$ moves each \emph{reachable} destination to a behaviourally equivalent state, where
+$s \sim t$ iff $Z_s^{(T-1)} = Z_t^{(T-1)}$ for that generator. Tested in the sufficient
+direction over $2002$ pairs:
+
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+ & suffix laws equal & suffix laws differ \\
+\midrule
+$\pi$ behaviourally compatible   & 153 & \textbf{0} \\
+$\pi$ incompatible               & 358 & 1491 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Zero counterexamples: compatibility suffices. It is not necessary---$358$ cases agree
+without it---which is expected, since the sums can coincide numerically without the
+permutation respecting behaviour.
+
+For the created case we pre-registered that dependencies appear exactly on partitions
+satisfying strong lumpability. That \emph{failed}, on one partition: the discrete
+partition $0|1|2|3$ is strongly lumpable only vacuously, every block being a singleton, and
+creates nothing because there is nothing for the quotient to collapse. The refinement
+---lumpable \emph{and} some block of size greater than one---matches dependency creation
+on all $14$ partitions, and we record it as post-hoc.
 
 \paragraph{Robust and fragile dependencies.}
 The two failures of Experiment~28 turn out to be one phenomenon. Breaking its $181$

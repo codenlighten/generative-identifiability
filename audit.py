@@ -361,13 +361,28 @@ C("E29_RANDOM_CREATED", "dependencies created, size-matched control", "EXH", Z,
 C("E29_TIED_PRESERVED", "dependencies preserved, tied class", "EXH", Z,
   grab(Z, r"^  TIED\s+\|H\| =\s+[\d,]+\s+preserved\s+(\d+)"), "8")
 C("E29_LUMPABLE_PARTITIONS", "partitions in which the lumpable class creates", "EXH", Z,
-  grab(Z, r"^  LUMPABLE.*\n.*\n\s+partitions with created dependencies: (\d+)/"), "1")
+  grab(Z, r"^  LUMPABLE(?:.*\n)*?\s+partitions with created dependencies: (\d+)/"), "1")
 C("E28_VIOL_PERM", "Z3 violations, PERM class", "EXH", Y,
   grab(Y, r"^        PERM\s+(\d+)"), "100")
 C("E28_VIOL_DERIVED", "Z3 violations, DERIVED class", "EXH", Y,
   grab(Y, r"^        DERIVED\s+(\d+)"), "81")
 C("E28_VIOL_EQUAL", "Z3 violations, EQUAL class", "EXH", Y,
   grab(Y, r"^        EQUAL\s+(\d+)"), "0")
+
+# --- E30, semantic preservation ---
+S30 = "mgs_semantic.py"
+C("E30_P1_COUNTEREXAMPLES", "identity-tie robustness counterexamples", "EXH", S30,
+  grab(S30, r"counterexamples over \d+ generator/partition pairs: (\d+)"), "0")
+C("E30_P2_COMPAT_EQUAL", "pi compatible and suffix laws equal", "EXH", S30,
+  grab(S30, r"pi compatible\s+(\d+)"), "153")
+C("E30_P2_COUNTEREXAMPLES", "pi compatible but suffix laws differ", "EXH", S30,
+  grab(S30, r"counterexamples \(compatible but differing\): (\d+)"), "0")
+C("E30_P2_SUFFICIENT_NOT_NECESSARY", "suffix laws equal without compatibility",
+  "EXH", S30, grab(S30, r"sufficient but not necessary: (\d+) cases"), "358")
+C("E30_P3_VERDICT", "pre-registered P3 verdict (bare lumpability)", "EXH", S30,
+  grab(S30, r"lumpability matches dependency creation exactly: (PASS|FAIL)"), "FAIL")
+C("E30_P3_REFINED", "refined criterion matches on all partitions", "EXH", S30,
+  grab(S30, r"matches dependency creation on all \d+ partitions: (\w+)"), "yes")
 
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
