@@ -114,6 +114,17 @@ Conditioning on a fixed $P$ preserves both properties, and
 $I(G; Z_A \mid P) = H(Z_A \mid P)$ by the same argument.
 \end{proof}
 
+The pair $(J, r)$ with $r(A) = H(Z_A)$ is therefore an \emph{entropic polymatroid}, the
+dependence structure Fujishige identified for collections of random
+variables~\cite{fujishige1978}. This is more specific than ``some submodular objective'':
+$r(\{j\}) = H(Z_j)$ is the standalone information of experiment $j$,
+$r(A \cup \{j\}) - r(A) = H(Z_j \mid Z_A)$ its marginal information, and
+$r(\{i\}) + r(\{j\}) - r(\{i,j\}) = I(Z_i; Z_j)$ the pairwise redundancy. Our contribution
+is not the greedy machinery, which is standard in observation
+selection~\cite{krause2005}, but that the finite-generator intervention problem induces an
+explicit entropic polymatroid whose rank values are exactly computable from generator
+equivalence classes, making those guarantees directly applicable.
+
 \begin{proposition}[One-way migration]\label{prop:oneway}
 Classify generators by thresholds on $i_O(g)$ and on a behavioural coordinate $p_k(g)$.
 If $p_k$ is evaluated under an operating condition held fixed across $O_1 \preceq O_2$,
@@ -292,6 +303,32 @@ experiments whose exact outputs are deterministic in the unknown generator, whic
 regime this framework assumes throughout. The greedy gain sequence here is $16.013$,
 $1.886$, $0.704$, $0.543$ bits; the fourth reset is nearly redundant.
 
+\paragraph{The polymatroid has no non-trivial closure.}
+A polymatroid carries a closure operator, $j \in \operatorname{cl}(A)$ iff
+$H(Z_j \mid Z_A) = 0$, and a basis is a minimal spanning set. We computed these exactly
+---$H(Z_J \mid Z_A) = 0$ holds iff $A$ induces as many generator classes as $J$, an
+integer comparison rather than a tolerance---for all $14$ non-trivial partitions of the
+four hidden states. In every one, the \emph{only} spanning set is $J$ itself. There is no
+experimental compression here: no reset is redundant given the other three, and a
+four-reset protocol cannot be replaced by a smaller one.
+
+The margins by which this fails are informative. $H(Z_j \mid Z_{J \setminus \{j\}})$ ranges
+from $0.280$ to $0.902$ bits, and within every partition it is monotone in the size of
+$j$'s observation block, with zero violations across all $14$: a reset into a state the
+observation already isolates contributes least that the others cannot supply. Notably
+block size does \emph{not} predict $H(Z_j)$ itself---Experiment~25 found those means
+non-monotone at $8.050$, $8.157$, $6.028$ for block sizes $1$, $2$, $3$---so the structural
+variable governs the conditional contribution and not the standalone one. This is the
+defensible residue of the intuition that failed in Experiment~24, and it is worth noting
+that the pairwise redundancies did not reveal it: $I(Z_0;Z_1)$ was marginally
+\emph{lower} for the singleton in the reversal case, while the conditional-on-all-others
+measure separates cleanly.
+
+A further contrast: the rank values $r(J)$ vary widely with the observation partition,
+from $9.892$ to $13.288$ bits, while the basis structure does not vary at all. What the
+observation map changes is how much the experiments tell you, not which of them are
+needed.
+
 \paragraph{The value of full intervention.}
 $H(G \mid O_P) - H(G \mid O_I) = 3.245 - 1.371 = 1.874$ bits, which by
 Proposition~\ref{prop:value} is exactly $I(G; O_I \mid O_P)$: the generator information the
@@ -347,9 +384,14 @@ repository accompanying~\cite{paper1}.
 \begin{thebibliography}{9}
 \bibitem{blackwell1953} D. Blackwell. Equivalent comparisons of experiments.
 \emph{Annals of Mathematical Statistics}, 24(2):265--272, 1953.
+\bibitem{fujishige1978} S. Fujishige. Polymatroidal dependence structure of a set of
+random variables. \emph{Information and Control}, 39(1):55--72, 1978.
 \bibitem{hauser2014} A. Hauser and P. B\"uhlmann. Two optimal strategies for active
 learning of causal models from interventional data. \emph{International Journal of
 Approximate Reasoning}, 55(4):926--939, 2014.
+\bibitem{krause2005} A. Krause and C. Guestrin. Near-optimal nonmyopic value of
+information in graphical models. In \emph{Proceedings of the 21st Conference on
+Uncertainty in Artificial Intelligence}, 2005.
 \bibitem{lindley1956} D. V. Lindley. On a measure of the information provided by an
 experiment. \emph{Annals of Mathematical Statistics}, 27(4):986--1005, 1956.
 \bibitem{nemhauser1978} G. L. Nemhauser, L. A. Wolsey, and M. L. Fisher. An analysis of
