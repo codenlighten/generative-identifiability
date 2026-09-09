@@ -416,6 +416,19 @@ C("E32_RICHER_TOTAL", "generator/partition pairs examined", "EXH", S32,
 C("E32_PARTITION_INSUFFICIENT", "same partition and classes, different kernel dim",
   "EXH", S32, grab(S32, r"but different kernel dimension: (\d+) cases"), "3")
 
+# --- E33, finite determination (all DRV: theorem-guaranteed) ---
+S33 = "mgs_finite.py"
+C("E33_OVER_BOUND", "cases where T_sem exceeds n-k+1", "DRV", S33,
+  grab(S33, r"T_sem exceeds the bound n-k\+1:\s+(\d+)"), "0")
+C("E33_PLATEAU_BROKEN", "plateaus later broken by a new drop", "DRV", S33,
+  grab(S33, r"a plateau later broken by a new drop: (\d+)"), "0")
+C("E33_CASES", "generator/partition cases checked", "EXH", S33,
+  grab(S33, r"= ([\d,]+) cases, horizons"), "910")
+C("E33_TIGHT_K2", "cases attaining T_sem = 3 at k = 2", "EXH", S33,
+  grab(S33, r"^      2\s+3\s+T=1: \d+, T=2: \d+, T=3: (\d+)"), "94")
+C("E33_TIGHT_K3", "cases attaining T_sem = 2 at k = 3", "EXH", S33,
+  grab(S33, r"^      3\s+2\s+T=1: \d+, T=2: (\d+)"), "265")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))

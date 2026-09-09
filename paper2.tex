@@ -563,6 +563,50 @@ of the preimage stabilisation at $T^\star$ reported in~\cite[\S9]{paper1}: preim
 contract over candidate generators, kernels contract over hidden-state directions, and both
 reach a floor.
 
+\begin{proposition}[Finite determination]\label{prop:finite}
+Let the hidden state set have $n$ elements and let $O$ have $k$ non-empty blocks. If
+$K_{T+1} = K_T$ for some $T$ then $K_s = K_T$ for all $s \ge T$; and writing
+$T_{\mathrm{sem}} = \min\{T : K_T = K_\infty\}$,
+\[
+  T_{\mathrm{sem}} \;\le\; n - k + 1,
+  \qquad\text{so}\qquad
+  K_\infty = K_{\,n-k+1}.
+\]
+\end{proposition}
+\begin{proof}
+Let $E_y$ be the diagonal selector for symbol $y$ and, for a word
+$w = y_0 \cdots y_{T-1}$, put
+$q_w = E_{y_0} P E_{y_1} P \cdots P E_{y_{T-1}} \mathbf{1}$, whose $x$-th entry is
+$\Pr(Y_{0:T-1} = w \mid X_0 = x)$. The columns of $B_T$ are the $q_w$, so
+$K_T = V_T^\perp$ with $V_T = \operatorname{span}\{q_w : |w| = T\}$. Since
+$q_{yw} = E_y P q_w$ we have $V_{T+1} = \operatorname{span}_y E_y P\, V_T$. Hence if
+$V_T = V_{T-1}$ then $V_{T+1} = \operatorname{span}_y E_y P V_{T-1} = V_T$, and by induction
+the chain is constant from $T$ onward; dualising gives the first claim. For the bound,
+$V_1 = \operatorname{span}\{E_y \mathbf{1}\}$ has dimension exactly $k$ because those
+vectors have disjoint supports, and $V_T \subseteq V_{T+1}$ with equality triggering
+permanent stabilisation, so each step before stabilisation strictly increases dimension
+inside an $n$-dimensional space. At most $n-k$ such increases are available.
+\end{proof}
+
+Two consequences are worth stating. For injective $O$ we have $k = n$ and the bound reads
+$T_{\mathrm{sem}} \le 1$, recovering Corollary~\ref{cor:inj}. For the four-state balanced
+lumping used throughout, $n = 4$ and $k = 2$ give $K_\infty = K_3$ exactly---so the
+stabilisation observed by $T \le 3$ in every case we sampled was not a property of the
+sample. Permanent semantic blindness in this setting is finitely decidable, and the horizon
+needed scales as hidden dimension minus immediately visible dimension.
+
+The bound is attained. Checking $910$ generator--partition cases through horizon $8$, no
+$T_{\mathrm{sem}}$ exceeds $n-k+1$ and no plateau is later broken; and for each $k$ the
+maximum is reached---$T_{\mathrm{sem}} = 3$ occurs $94$ times at $k=2$, $T_{\mathrm{sem}} = 2$
+occurs $265$ times at $k=3$, and every case at $k=4$ has $T_{\mathrm{sem}} = 1$. So the
+bound is tight rather than merely valid, and no smaller horizon suffices in general.
+
+We state Proposition~\ref{prop:finite} for the model actually formalised here: finite
+hidden-state set, finite observation alphabet, deterministic state observation,
+time-homogeneous transitions, exact finite-dimensional laws. The proof uses the
+deterministic selectors directly and we do not extend it to stochastic emissions,
+controlled processes, continuous state, or empirically estimated laws.
+
 \paragraph{The kernel is strictly richer than a state partition.}
 Classical behavioural equivalence of states, $x \equiv y$ iff they induce identical
 observable laws, embeds in the kernel as the difference vectors $e_x - e_y$. Write $D$ for
@@ -587,10 +631,11 @@ distinguishing every pair of them.
 This is why the semantic kernel is the right object rather than a refinement of the state
 partition. A partition can only record which states are indistinguishable; the kernel
 records which linear combinations are, and the $358$ weighted cancellations of
-Experiment~30 are of exactly this kind. In the sample the kernel dimension stabilised at
-$T \le 3$ throughout---$142$, $261$ and $59$ pairs at $T = 1, 2, 3$---though by
-Proposition~\ref{prop:mono} a plateau bounds the kernel from above without proving
-stabilisation for all $T$, which would need a finite-rank argument we do not have.
+Experiment~30 are of exactly this kind. The kernel dimension stabilised at $T \le 3$ throughout---$142$, $261$ and $59$ pairs at
+$T = 1, 2, 3$---which Proposition~\ref{prop:finite} says had to happen, since $n - k + 1 = 3$
+here. The witness above therefore certifies more than it appears to: exhibiting
+$v \in K_3$ for a two-block observation of four states establishes $v \in K_\infty$, so
+that mixture is invisible at \emph{every} horizon, not merely at the ones we computed.
 
 Proposition~\ref{prop:kernel} also gives the robust/fragile distinction a definition rather
 than a label: a dependency is \emph{robust} when its difference vector lies in
