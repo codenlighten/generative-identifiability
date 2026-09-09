@@ -15,7 +15,7 @@ DOCUMENTATION
 ----------------------------------------------------------------------------
 MIT License
 
-Copyright (c) 2026 Gregory J. Ward
+Copyright (c) 2026 Gregory J. Ward, Bryan W. Daugherty, and Shawn M. Ryan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,7 @@ commercially, provided you give appropriate credit, link to the license, and
 indicate if changes were made. No additional restrictions may be applied.
 
 Suggested attribution:
-    Gregory J. Ward, "Identifiability and Predictability Are Distinct: Measured
+    Gregory J. Ward, Bryan W. Daugherty, and Shawn M. Ryan, "Identifiability and
+    Predictability Are Distinct: Measured
     Preimages Across Generative Systems" (2026),
     https://github.com/codenlighten/generative-identifiability — CC BY 4.0

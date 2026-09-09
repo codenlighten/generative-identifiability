@@ -138,8 +138,9 @@ Gregory J. Ward, Bryan W. Daugherty, Shawn M. Ryan.
 Metadata is in [`CITATION.cff`](CITATION.cff); GitHub's *Cite this repository* button reads
 it directly. The manuscript is an unpublished draft, so cite it as such:
 
-> Gregory J. Ward, "Identifiability and Predictability Are Distinct: Measured Preimages Across
-> Generative Systems" (2026), unpublished draft.
+> Gregory J. Ward, Bryan W. Daugherty and Shawn M. Ryan, "Identifiability and
+> Predictability Are Distinct: Measured Preimages Across Generative Systems" (2026),
+> unpublished draft.
 > https://github.com/codenlighten/generative-identifiability
 
 ## License
