@@ -68,7 +68,19 @@ generators with a finite mixed-state set                  EXH          40.8     
 mean i_O of excluded generators                           EXH         2.217        2.217  ok
 mean i_O of retained generators                           EXH         2.325        2.325  ok
 excluded generators terminating at a 20,000-state budget  SMP             0            0  ok
+partition-sweep hypothesis class size                     EXH         10000        10000  ok
+cells where H is non-increasing in coverage               EXH             3            3  ok
+cells tested for the crossing conjecture                  EXH            23           23  ok
+fraction of cells supporting the crossing conjecture      EXH          13.0         13.0  ok
+pre-registered verdict on the crossing conjecture         EXH  NOT SUPPORTED NOT SUPPORTED  ok
+equal-block cells satisfying the conjecture               EXH             3            3  ok
+equal-block cells tested                                  EXH             3            3  ok
+largest H spread across coverage at fixed |A|             EXH         1.065        1.065  ok
+unbalanced partition, coverage 1, H                       EXH         4.852        4.852  ok
+unbalanced partition, coverage 2, H                       EXH         5.917        5.917  ok
+balanced partition, coverage 1, H                         EXH         4.187        4.187  ok
+balanced partition, coverage 2, H                         EXH         3.799        3.799  ok
 --------------------------------------------------------------------------------------------------------------
-65 claims audited, 65 ok, 0 needing attention
+77 claims audited, 77 ok, 0 needing attention
 
 machine-readable values written to RESULTS.txt
