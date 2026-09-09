@@ -281,6 +281,27 @@ C("E25_BALANCED_REDUNDANCY_TERM", "balanced gap, redundancy term", "EXH", V,
   grab(V, r"^  01\|23     \{0,2\}.*\n    gap.*redundancy term \+?([-\d.]+)"),
   "-0.387", 0.005)
 
+# --- E26, bases of the intervention polymatroid ---
+W = "mgs_basis.py"
+C("E26_BASIS_SIZE_MIN", "smallest minimal basis over all partitions", "EXH", W,
+  grab(W, r"cardinalities across all partitions: min (\d+)"), "4")
+C("E26_BASIS_SIZE_MAX", "largest minimal basis over all partitions", "EXH", W,
+  grab(W, r"cardinalities across all partitions: min \d+, max (\d+)"), "4")
+C("E26_EQUICARDINAL", "partitions whose minimal bases are equicardinal", "EXH", W,
+  grab(W, r"\(matroid-like\): (\d+)/\d+"), "14")
+C("E26_PARTITIONS_TESTED", "partitions tested for bases", "EXH", W,
+  grab(W, r"\(matroid-like\): \d+/(\d+)"), "14")
+C("E26_RANK_MIN", "smallest r(J) over partitions", "EXH", W,
+  grab(W, r"^  023\|1\s+([\d.]+)"), "9.892", 0.005)
+C("E26_RANK_MAX", "largest r(J) over partitions", "EXH", W,
+  grab(W, r"^  0\|1\|2\|3\s+([\d.]+)"), "13.288", 0.005)
+C("E26_MARGIN_SINGLETON", "H(Z_j|Z_rest), singleton block, partition 0|123", "EXH", W,
+  grab(W, r"^    0\|123\s+([\d.]+)"), "0.280", 0.005)
+C("E26_MARGIN_THREEBLOCK", "H(Z_j|Z_rest), three-state block, partition 0|123", "EXH", W,
+  grab(W, r"^    0\|123\s+[\d.]+\s+([\d.]+)"), "0.902", 0.005)
+C("E26_BLOCKSIZE_VIOLATIONS", "block size vs conditional contribution, violations",
+  "EXH", W, grab(W, r"violations across all \d+ partitions: (\d+)"), "0")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))
