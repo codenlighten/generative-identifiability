@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EXPERIMENT 32 -- the limiting semantic kernel.
+EXPERIMENT 32 -- the limiting belief-observability kernel.
 
 Frozen before running.
 
@@ -24,7 +24,7 @@ The question this experiment asks is whether K_inf is richer than a state
 partition. Let x = y mean states x and y induce identical observable laws --
 classical behavioural equivalence -- and let D = span{ e_x - e_y : x = y }.
 Then D is contained in K always. If K is strictly larger for some generator,
-the semantic kernel detects linear observational equivalences among MIXTURES
+the belief-observability kernel detects linear observational equivalences among MIXTURES
 of hidden states that no equivalence relation on states can express.
 
 CRITERIA
@@ -112,7 +112,7 @@ def span_rank(vecs):
 
 def main():
     print("=" * 78)
-    print("EXPERIMENT 32  the limiting semantic kernel")
+    print("EXPERIMENT 32  the limiting belief-observability kernel")
     print("=" * 78)
     TMAX = 7
     free = [tuple(g) for g in itertools.product(range(NR), repeat=NS)][::311]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EXPERIMENT 31 -- the semantic kernel.
+EXPERIMENT 31 -- the belief-observability kernel.
 
 Frozen before running.
 
@@ -113,7 +113,7 @@ CLASSES = ["FREE", "EQUAL", "PERM", "LUMPABLE"]
 
 def main():
     print("=" * 78)
-    print("EXPERIMENT 31  the semantic kernel: (P_s - P_t) B = 0")
+    print("EXPERIMENT 31  the belief-observability kernel: (P_s - P_t) B = 0")
     print("=" * 78)
     T = 5
     k1_bad = k1_tot = 0

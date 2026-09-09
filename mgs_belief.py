@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EXPERIMENT 35 -- the semantic kernel in belief space.
+EXPERIMENT 35 -- the belief-observability kernel in belief space.
 
 Rows of B_T are probability laws over words, so B_T 1 = 1 and therefore
 
@@ -70,7 +70,7 @@ def left_kernel(B):
 
 def main():
     print("=" * 78)
-    print("EXPERIMENT 35  the semantic kernel is a belief-space nullspace")
+    print("EXPERIMENT 35  the belief-observability kernel is a belief-space nullspace")
     print("=" * 78)
     gens = [tuple(g) for g in itertools.product(range(NR), repeat=NS)][::311]
     bad = tot = 0

@@ -74,7 +74,7 @@ def kernel_dim(M, obsv, k, T):
 
 def main():
     print("=" * 78)
-    print("EXPERIMENT 33  finite determination of the semantic kernel (DRV check)")
+    print("EXPERIMENT 33  finite determination of the belief-observability kernel (DRV check)")
     print("=" * 78)
     free = [tuple(g) for g in itertools.product(range(NR), repeat=NS)][::311]
     lump = [(r0, r1, r2, r3) for a in (0,1,2) for b in (0,1,2)

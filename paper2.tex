@@ -488,7 +488,7 @@ observable law of the next $T-1$ symbols from hidden state $x$, and $B_{O,T-1}(G
 matrix with those rows. Resetting to $s$ and taking one transition leaves the hidden
 distribution $P_s$, so the suffix law is $S_s^{(T)} = P_s B$.
 
-\begin{proposition}[Semantic kernel]\label{prop:kernel}
+\begin{proposition}[Belief-observability kernel]\label{prop:kernel}
 For a finite generator $G$, observation map $O$ and horizon $T$,
 \[
   S_s^{(T)} = S_t^{(T)}
@@ -543,7 +543,7 @@ kernel vectors.
 \end{proof}
 
 \begin{proposition}[Belief-space interpretation]\label{prop:belief}
-$K_T \subseteq \mathbf{1}^\perp$: every semantic-kernel direction has zero coordinate sum.
+$K_T \subseteq \mathbf{1}^\perp$: every belief-observability kernel direction has zero coordinate sum.
 Consequently, for an interior belief $\mu \in \Delta^{n-1}$ and $\epsilon$ small enough
 that $\mu + \epsilon v$ remains in the simplex, $\mu$ and $\mu + \epsilon v$ induce
 identical observable laws if and only if $v \in K_T$.
@@ -556,7 +556,12 @@ $(\mu + \epsilon v)B_T = \mu B_T$ iff $\epsilon v B_T = 0$ iff $vB_T = 0$.
 
 The kernel is therefore not merely algebraic. It is the nullspace of hidden-belief
 observability: the directions along which a belief can be moved without changing any
-observable future law. Writing
+observable future law. That notion is not ours. Van Handel~\cite{vanhandel2009} calls a
+hidden Markov model \emph{observable} when no two initial measures of the signal induce the
+same law of the observation process, which is exactly the condition $K_\infty = \{0\}$
+stated at the level of beliefs rather than of a kernel. Proposition~\ref{prop:belief} is
+that definition recovered constructively in finite dimensions, with an explicit basis and a
+horizon at which it is decidable. Writing
 \[
   d_{\mathrm{obs}} \;=\; (n-1) - \dim K_\infty
 \]
@@ -601,9 +606,9 @@ reach a floor.
 \begin{proposition}[Finite determination]\label{prop:finite}
 Let the hidden state set have $n$ elements and let $O$ have $k$ non-empty blocks. If
 $K_{T+1} = K_T$ for some $T$ then $K_s = K_T$ for all $s \ge T$; and writing
-$T_{\mathrm{sem}} = \min\{T : K_T = K_\infty\}$,
+$T_{\mathrm{obs}} = \min\{T : K_T = K_\infty\}$,
 \[
-  T_{\mathrm{sem}} \;\le\; n - k + 1,
+  T_{\mathrm{obs}} \;\le\; n - k + 1,
   \qquad\text{so}\qquad
   K_\infty = K_{\,n-k+1}.
 \]
@@ -624,16 +629,16 @@ inside an $n$-dimensional space. At most $n-k$ such increases are available.
 \end{proof}
 
 Two consequences are worth stating. For injective $O$ we have $k = n$ and the bound reads
-$T_{\mathrm{sem}} \le 1$, recovering Corollary~\ref{cor:inj}. For the four-state balanced
+$T_{\mathrm{obs}} \le 1$, recovering Corollary~\ref{cor:inj}. For the four-state balanced
 lumping used throughout, $n = 4$ and $k = 2$ give $K_\infty = K_3$ exactly---so the
 stabilisation observed by $T \le 3$ in every case we sampled was not a property of the
 sample. Permanent semantic blindness in this setting is finitely decidable, and the horizon
 needed scales as hidden dimension minus immediately visible dimension.
 
 The bound is attained. Checking $910$ generator--partition cases through horizon $8$, no
-$T_{\mathrm{sem}}$ exceeds $n-k+1$ and no plateau is later broken; and for each $k$ the
-maximum is reached---$T_{\mathrm{sem}} = 3$ occurs $94$ times at $k=2$, $T_{\mathrm{sem}} = 2$
-occurs $265$ times at $k=3$, and every case at $k=4$ has $T_{\mathrm{sem}} = 1$. So the
+$T_{\mathrm{obs}}$ exceeds $n-k+1$ and no plateau is later broken; and for each $k$ the
+maximum is reached---$T_{\mathrm{obs}} = 3$ occurs $94$ times at $k=2$, $T_{\mathrm{obs}} = 2$
+occurs $265$ times at $k=3$, and every case at $k=4$ has $T_{\mathrm{obs}} = 1$. So the
 bound is tight rather than merely valid, and no smaller horizon suffices in general.
 
 The proof does not in fact use determinism, and saying so sharpens the result. Nothing in
@@ -652,13 +657,13 @@ $K_{T+1} \subseteq K_T$, any one-step plateau is permanent, and
 \end{corollary}
 
 Checking the generalisation over $15$ transition matrices and emission matrices of each
-rank, no $T_{\mathrm{sem}}$ exceeds the bound, and it is attained for
+rank, no $T_{\mathrm{obs}}$ exceeds the bound, and it is attained for
 $\operatorname{rank} C = 2, 3, 4$. It is \emph{not} attained at rank $1$, and that gap is
 structural rather than a sampling artefact: a row-stochastic $C$ of rank $1$ has all rows
 equal, since they are proportional and each sums to one, so emission is independent of
 state, $V_1 = \operatorname{span}\{\mathbf{1}\}$, and
 $V_2 = \operatorname{span}_y E_y P \mathbf{1} = \operatorname{span}_y E_y \mathbf{1} = V_1$.
-Thus $T_{\mathrm{sem}} = 1$ whenever $\operatorname{rank} C = 1$, and the bound $n$ is
+Thus $T_{\mathrm{obs}} = 1$ whenever $\operatorname{rank} C = 1$, and the bound $n$ is
 unattainable for $n > 1$. The bound is therefore tight for $\operatorname{rank} C \ge 2$
 and loose exactly at the degenerate rank where the observation is uninformative.
 
@@ -667,7 +672,7 @@ row, whose columns are the block indicators, so $\operatorname{rank} C = k$. The
 quantity is therefore not the size of the observation alphabet but the rank of the one-step
 emission information: an alphabet with many symbols whose state signatures span a
 low-dimensional subspace behaves like a coarse partition, and an emission matrix of full row
-rank gives $T_{\mathrm{sem}} = 1$ without any deterministic state label. We claim Corollary~\ref{cor:stoch} as a transparent rank-sensitive
+rank gives $T_{\mathrm{obs}} = 1$ without any deterministic state label. We claim Corollary~\ref{cor:stoch} as a transparent rank-sensitive
 finite-horizon certificate inside this framework, not as a new finite-equivalence
 principle. The underlying algebra is the reachable-subspace argument familiar from
 probabilistic and weighted automata, where equivalence is decidable in polynomial
@@ -703,7 +708,7 @@ $b_3 = \tfrac12(b_0 + b_2)$ and $v = (-\tfrac12, 0, -\tfrac12, 1)$ lies in $\ker
 every horizon. The observation is blind to a \emph{mixture} of hidden states while
 distinguishing every pair of them.
 
-This is why the semantic kernel is the right object rather than a refinement of the state
+This is why the belief-observability kernel is the right object rather than a refinement of the state
 partition. A partition can only record which states are indistinguishable; the kernel
 records which linear combinations are, and the $358$ weighted cancellations of
 Experiment~30 are of exactly this kind. The kernel dimension stabilised at $T \le 3$ throughout---$142$, $261$ and $59$ pairs at
@@ -738,7 +743,14 @@ The order is Blackwell's~\cite{blackwell1953}; our instance is its degenerate de
 case. Choosing experiments to maximise expected information is Lindley's~\cite{lindley1956},
 and choosing interventions to secure identifiability is well developed in causal discovery,
 where optimal strategies are known~\cite{hauser2014}. The greedy guarantee for submodular
-objectives is~\cite{nemhauser1978}. What we contribute is not a new criterion but an
+objectives is~\cite{nemhauser1978}. We claim no new theory of Blackwell comparison, submodular information selection,
+probabilistic-automaton equivalence, or predictive-state observability; each is established
+and cited above. The contribution we do claim is integration: an exactly enumerable
+generator-identification framework in which these become different views of one
+experimental problem---observation induces generator preimages, refinement orders those
+preimages, intervention outputs induce an entropic polymatroid, and the
+belief-observability kernel characterises the hidden-belief directions no observation
+horizon can distinguish. What we contribute technically is an
 exactly enumerated lattice: every experiment in a finite family, every containment relation
 checked rather than assumed. Of the facts we first took to be empirical, submodularity is a
 theorem (Proposition~\ref{prop:submod}) and the crossing rule is refuted; what survives as
@@ -749,7 +761,16 @@ Propositions~\ref{prop:mono}--\ref{prop:lump} settle.
 \section{Limitations}
 
 The lattice is computed on one family with one lumping, and the striking symmetry of
-Table~\ref{tab:lattice} is a property of that construction. We do not know what distinguishes robust from fragile dependencies beyond the four
+Table~\ref{tab:lattice} is a property of that construction. One comparison is outstanding and should be settled before this is circulated widely. Ito,
+Amari and Kobayashi~\cite{ito1992} solve identifiability for hidden Markov processes by
+linear algebra and introduce a $\Delta$-subspace characterising the effective minimum
+degree of the process. We have not compared their construction with $K_\infty$ in detail,
+and it is entirely possible that the belief-observability kernel is a dual, annihilator, or
+otherwise equivalent presentation of an object already implicit there. Nothing in this
+paper should be read as claiming the kernel notion is new; the wording throughout is that
+it is recovered in the notation of the preimage framework.
+
+We do not know what distinguishes robust from fragile dependencies beyond the four
 examples in Table~\ref{tab:dependency}; identity ties are robust and permutation or
 two-row constraints are fragile, which is a pattern with $n = 4$. The lumpable
 construction of Table~\ref{tab:pdc} is one aggregation matched to one partition, and we
@@ -794,6 +815,9 @@ random variables. \emph{Information and Control}, 39(1):55--72, 1978.
 \bibitem{hauser2014} A. Hauser and P. B\"uhlmann. Two optimal strategies for active
 learning of causal models from interventional data. \emph{International Journal of
 Approximate Reasoning}, 55(4):926--939, 2014.
+\bibitem{ito1992} H. Ito, S.-I. Amari, and K. Kobayashi. Identifiability of hidden Markov
+information sources and their minimum degrees of freedom. \emph{IEEE Transactions on
+Information Theory}, 38(2):324--333, 1992.
 \bibitem{jaeger2000} H. Jaeger. Observable operator models for discrete stochastic time
 series. \emph{Neural Computation}, 12(6):1371--1398, 2000.
 \bibitem{krause2005} A. Krause and C. Guestrin. Near-optimal nonmyopic value of
@@ -807,6 +831,8 @@ experiment. \emph{Annals of Mathematical Statistics}, 27(4):986--1005, 1956.
 \bibitem{nemhauser1978} G. L. Nemhauser, L. A. Wolsey, and M. L. Fisher. An analysis of
 approximations for maximizing submodular set functions---I. \emph{Mathematical
 Programming}, 14(1):265--294, 1978.
+\bibitem{vanhandel2009} R. van Handel. Observability and nonlinear filtering.
+\emph{Probability Theory and Related Fields}, 145(1--2):35--74, 2009.
 \bibitem{tzeng1992} W. Tzeng. A polynomial-time algorithm for the equivalence of
 probabilistic automata. \emph{SIAM Journal on Computing}, 21(2):216--227, 1992.
 \bibitem{paper1} G. J. Ward, B. W. Daugherty, and S. M. Ryan. Identifiability and
