@@ -33,7 +33,9 @@ mean $H(G \mid O)$ both fall---a one-line consequence, but one that turns ``more
 informative'' into an order rather than a scale.
 
 We instantiate the order exactly on all $1{,}500{,}625$ four-state partially observed
-Markov chains, enumerating every subset of hidden-state resets. Four findings. The
+Markov chains, enumerating every subset of hidden-state resets. The reset sets form a
+Boolean lattice under inclusion; informativeness itself is only a preorder, and we reserve
+``lattice'' for the former. Four findings. The
 passive experiment is a \emph{deterministic} coarsening of the full interventional one,
 confirmed exactly, so its $1.874$ bits of shortfall is precisely
 $I(G; O_I \mid O_P)$. Informativeness is genuinely partial, not total: a single reset
@@ -93,6 +95,22 @@ Proposition~\ref{prop:value} is what licenses reading a difference of conditiona
 entropies as the information the finer experiment carries that the coarser one cannot
 reach. It requires the order; between incomparable experiments the difference is a
 comparison of two numbers and nothing more.
+
+\begin{proposition}[Submodularity]\label{prop:submod}
+Let $Z_j = O_j(G)$ for $j$ in a finite index set $J$, with each $Z_j$ a deterministic
+function of $G$, and write $Z_A = (Z_j)_{j \in A}$. Then
+$F(A) = I(G; Z_A) = H(Z_A)$ is monotone and submodular in $A$. The same holds
+conditionally on any fixed observation $P$: $F_P(A) = I(G; Z_A \mid P) = H(Z_A \mid P)$
+is monotone and submodular.
+\end{proposition}
+\begin{proof}
+$H(Z_A \mid G) = 0$ because each $Z_j$ is a function of $G$, so
+$I(G; Z_A) = H(Z_A) - H(Z_A \mid G) = H(Z_A)$. The entropy of a collection of random
+variables is a monotone submodular set function, which is Shannon's inequality
+$H(Z_{A \cup \{j\}}) - H(Z_A) \ge H(Z_{B \cup \{j\}}) - H(Z_B)$ for $A \subseteq B$.
+Conditioning on a fixed $P$ preserves both properties, and
+$I(G; Z_A \mid P) = H(Z_A \mid P)$ by the same argument.
+\end{proof}
 
 \begin{proposition}[One-way migration]\label{prop:oneway}
 Classify generators by thresholds on $i_O(g)$ and on a behavioural coordinate $p_k(g)$.
@@ -154,9 +172,17 @@ A single reset leaves $4.504$ bits; passive observation leaves $3.245$. One inte
 is \emph{less} identifying than watching a system you did not touch. There is no
 contradiction with Proposition~\ref{prop:contain}: $O_P$ is a coarsening of the full reset
 set, not of any singleton, so the two are incomparable in $\preceq$ and the proposition
-says nothing about them. Two resets ($2.618$) overtake passive; one does not. Any claim
-of the form ``intervention beats observation'' is therefore false as stated, and the
-correct statement is that the order is partial.
+says nothing about them. Two resets ($2.618$) overtake passive; one does not. Three relations are in play and
+only two are comparabilities:
+\[
+  O_P \preceq O_{\{0,1,2,3\}}, \qquad
+  O_{\{0\}} \preceq O_{\{0,1,2,3\}}, \qquad
+  O_{\{0\}} \;\;\text{and}\;\; O_P \;\;\text{incomparable.}
+\]
+Passive is a garbling of the full reset protocol, but neither passive nor a single reset is
+a garbling of the other, so their entropies may fall in either order and here they fall the
+surprising way. Any claim of the form ``intervention beats observation'' is false as
+stated; the correct statement is that informativeness is a partial order.
 
 \paragraph{The interventions that pay are those crossing the observation's kernel.}
 Let $x \sim_O y$ iff $O(x) = O(y)$, here $\{0,1\}$ and $\{2,3\}$. Two resets chosen inside
@@ -175,14 +201,26 @@ informative about $G$ than interventions of equal cardinality confined within a 
 $\sim_O$ class.
 \end{quote}
 
-\paragraph{Information gain is submodular.}
-With $F(A) = H(G \mid O_\varnothing) - H(G \mid O_A)$, every one of the $108$ triples
-$A \subseteq B$, $j \notin B$ satisfies
-$F(A \cup \{j\}) - F(A) \ge F(B \cup \{j\}) - F(B)$, with no violations. Submodular
-maximisation under a cardinality constraint admits the classical $(1 - 1/e)$ greedy
-guarantee~\cite{nemhauser1978}, so where the property holds, greedy intervention selection
-is not merely a heuristic. The greedy gain sequence here is $16.013$, $1.886$, $0.704$,
-$0.543$ bits: the fourth reset is nearly redundant.
+\paragraph{Information gain is submodular---by Proposition~\ref{prop:submod}, not by
+observation.}
+An earlier version of this paper reported $108$ submodularity inequalities holding with
+zero violations and described the property as measured. That was a category error. In this
+setting the observable law of each reset is an exact deterministic function of the
+generator, so $F(A) = H(Z_A)$ and submodularity is Shannon's inequality; the computation
+could not have failed, and it checks our implementation rather than the mathematics. We
+record it as such: $108/108$, consistent with the theorem.
+
+What the theorem buys is operational. Maximising a monotone submodular function under a
+cardinality constraint admits the classical $(1 - 1/e)$ greedy
+guarantee~\cite{nemhauser1978}, so under a budget $|A| \le k$ the rule
+\[
+  j^\star_t \;=\; \operatorname*{arg\,max}_{j \notin A_t}\; I\big(G; Z_j \mid P, Z_{A_t}\big)
+\]
+---perform next the experiment expected to eliminate the most remaining ambiguity---is
+within $1 - 1/e$ of the best possible set of that size. That holds for any family of
+experiments whose exact outputs are deterministic in the unknown generator, which is the
+regime this framework assumes throughout. The greedy gain sequence here is $16.013$,
+$1.886$, $0.704$, $0.543$ bits; the fourth reset is nearly redundant.
 
 \paragraph{The value of full intervention.}
 $H(G \mid O_P) - H(G \mid O_I) = 3.245 - 1.371 = 1.874$ bits, which by
@@ -205,9 +243,10 @@ crossing rule, submodularity---measured rather than argued.
 The lattice is computed on one family with one lumping, and the striking symmetry of
 Table~\ref{tab:lattice} is a property of that construction. The crossing conjecture is
 supported by a single $2{+}2$ lumping of four states and should not be treated as
-established. Submodularity is confirmed on $108$ triples in one family and is not proved;
-we do not know what conditions on $\HH$ and $O$ imply it, and that is the obvious next
-theorem. Identification is at horizon $T=6$, which is where the partition of this family
+established. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact
+experiment outputs are deterministic functions of the generator; it would need revisiting
+for noisy or sampled observations, where $H(Z_A \mid G) > 0$ and the identity
+$F(A) = H(Z_A)$ fails. Identification is at horizon $T=6$, which is where the partition of this family
 stabilises~\cite[\S9]{paper1}, but stability over a finite window is evidence rather than
 proof. Proposition~\ref{prop:contain} is a theorem, so the computation confirming it tests
 our implementation, not the mathematics.
@@ -220,7 +259,10 @@ induces an equivalence relation and the cell containing the truth contracts,
   \HH \supseteq [g]_{\Pi_1} \supseteq [g]_{\Pi_2} \supseteq \cdots ,
 \]
 with perfect resolution at $[g]_\Pi = \{g\}$ and irreducible ambiguity when the admissible
-lattice bottoms out while $|[g]_\Pi| > 1$. What the measurements add is that the rate of
+order bottoms out while $|[g]_\Pi| > 1$. Three structures sit on top of one another:
+generator space is partitioned by an observation; the information order says which
+partitions refine which; and submodularity controls how efficiently refinements can be
+bought under a budget. What the measurements add is that the rate of
 contraction is controlled by the order on experiments, that the order is partial rather
 than total---so more control is not uniformly more information---and that the experiments
 worth buying are the ones that cross the distinctions the observation map erases.
