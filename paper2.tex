@@ -40,9 +40,11 @@ passive experiment is a \emph{deterministic} coarsening of the full intervention
 confirmed exactly, so its $1.874$ bits of shortfall is precisely
 $I(G; O_I \mid O_P)$. Informativeness is genuinely partial, not total: a single reset
 leaves $4.504$ bits where passive observation leaves $3.245$, so one intervention is
-\emph{worse} than watching, while two are better. Which two matters enormously and the
-rule is structural---two resets inside one observational lump identify $0\%$ of the class,
-two that cross the lump identify $58.55\%$, at identical cost. And information gain is
+\emph{worse} than watching, while two are better. Which two matters enormously---two resets inside one observational
+lump identify $0\%$ of the class, two that cross it identify $58.55\%$, at identical
+cost---though a sweep over all $15$ partitions of the state space shows the crossing rule
+holds only when the observation's blocks are equal in size, and reverses when they are
+not. And information gain is
 submodular across every triple we can form, which places greedy experiment selection on
 familiar footing.
 
@@ -191,15 +193,33 @@ $2.618$ bits and uniquely identify $58.55\%$ of the entire hypothesis class. The
 identical. Greedy selection, run without knowledge of the lumping, chooses $0$, then $2$,
 then $3$, then $1$---crossing at the first opportunity.
 
-The mechanism is not mysterious: resets within a $\sim_O$ class differ only in a
-distinction the observation map already erases, so they re-ask a question the passive
-experiment has largely answered. We state it as a conjecture rather than a theorem, since
-we have measured it on one lumping of one family:
-\begin{quote}
-\emph{Crossing conjecture.} Interventions that separate states identified by $O$ are more
-informative about $G$ than interventions of equal cardinality confined within a single
-$\sim_O$ class.
-\end{quote}
+We stated this as a conjecture---interventions crossing $\sim_O$ dominate interventions of
+equal cardinality confined within one class---and then tested it, with criteria fixed in
+advance, over \emph{all} $15$ set partitions of the four hidden states. It is false.
+
+The sweep uses a coarser but still completely enumerated family so that every partition is
+affordable: transition rows from $\{0,\frac12,1\}$, giving $10^4 = 10{,}000$ generators, at
+$T=5$; entropies are therefore not comparable in absolute terms with
+Table~\ref{tab:lattice}. Within each (partition, $|A|$) cell we asked whether mean
+$H(G \mid O_A)$ is non-increasing in the number of blocks $A$ meets. It is in only
+$3$ of $23$ cells---$13\%$, against a pre-committed threshold of $90\%$.
+
+The failures have a clean shape. For the partition $\{0\} \mid \{1,2,3\}$ the effect
+\emph{reverses}: two resets confined to the large block leave $4.852$ bits, while two that
+cross leave $5.917$---crossing is worse by $1.065$ bits. For the balanced
+$\{0,1\} \mid \{2,3\}$ the original direction holds, $3.799$ against $4.187$. Restricting
+the test to partitions whose blocks are all the same size, it passes $3/3$.
+
+The explanation we favour, and flag as post-hoc, is that coverage was the wrong statistic.
+A singleton block carries no internal ambiguity---the observation already identifies that
+state---so a reset spent there buys nothing, and what matters is how much an intervention
+probes blocks that are internally ambiguous. Crossing correlates with that only when the
+blocks are equal in size. The corrected statement would be about block sizes rather than
+block counts, and we do not yet have it in testable form.
+
+We record the refutation rather than quietly narrowing the claim, because the conjecture as
+first written was the natural reading of Table~\ref{tab:lattice} and would have been an
+easy thing to leave standing.
 
 \paragraph{Information gain is submodular---by Proposition~\ref{prop:submod}, not by
 observation.}
@@ -241,9 +261,9 @@ crossing rule, submodularity---measured rather than argued.
 \section{Limitations}
 
 The lattice is computed on one family with one lumping, and the striking symmetry of
-Table~\ref{tab:lattice} is a property of that construction. The crossing conjecture is
-supported by a single $2{+}2$ lumping of four states and should not be treated as
-established. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact
+Table~\ref{tab:lattice} is a property of that construction. The crossing conjecture is refuted in general and survives only for equal-block
+partitions; the replacement hypothesis about internally ambiguous blocks is post-hoc and
+untested. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact
 experiment outputs are deterministic functions of the generator; it would need revisiting
 for noisy or sampled observations, where $H(Z_A \mid G) > 0$ and the identity
 $F(A) = H(Z_A)$ fails. Identification is at horizon $T=6$, which is where the partition of this family
