@@ -73,9 +73,16 @@ def aux_single_point():
     return {x: round(bits(x), 2) for x in (0, 1, 2, 3, 4, 5)}
 
 # ---------------------------------------------------------------- claim table
-def grab(script, pattern, group=1):
+def grab(script, pattern, group=1, raw=False):
+    """Extract one captured value from a script's output.
+
+    Commas are stripped by default so thousands separators in figures like
+    1,500,625 compare cleanly. Pass raw=True for values where a comma is
+    part of the content -- a set literal such as {0,1,2,3}, for instance."""
     m = re.search(pattern, text(script), re.M)
-    return m.group(group).replace(",", "") if m else None
+    if not m:
+        return None
+    return m.group(group) if raw else m.group(group).replace(",", "")
 
 CLAIMS = []
 SEEN = set()
@@ -328,7 +335,8 @@ C("E28_Z3_VIOLATIONS", "cl_G(A) not subset cl_Z(A), violation count", "EXH", Y,
 C("E28_CREATED_DEPENDENCIES", "dependencies in cl_Z absent from cl_G", "EXH", Y,
   grab(Y, r"observation-created\): (\d+)"), "0")
 C("E28_FREE_BASIS", "FREE class minimal basis", "EXH", Y,
-  grab(Y, r"FREE      \|H\|.*\n.*minimal intervention bases: (\{[\d,]+\})"), "{0,1,2,3}")
+  grab(Y, r"FREE      \|H\|.*\n.*minimal intervention bases: (\{[\d,]+\})", raw=True),
+  "{0,1,2,3}")
 C("E28_EQUAL_INVARIANT", "EQUAL class basis invariance", "EXH", Y,
   grab(Y, r"^        EQUAL     (\w+)"), "invariant")
 C("E28_PERM_INVARIANT", "PERM class basis invariance", "EXH", Y,
