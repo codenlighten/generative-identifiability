@@ -1,0 +1,248 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}[proposition]{Definition}
+\newcommand{\HH}{\ensuremath{\mathcal{H}}}
+
+\title{\bf The Information Order of Experiments:\\
+Intervention Lattices and Generator Identifiability}
+\author{
+  Gregory J. Ward\thanks{Corresponding author: \texttt{greg@smartledger.technology}}
+  \and Bryan W. Daugherty
+  \and Shawn M. Ryan
+}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Which experiment should you run next? We give the question a finite, exactly computable
+form. For a hypothesis space $\HH$ of candidate generators, write $O_1 \preceq O_2$ when
+$O_1$ is obtainable from $O_2$ by garbling. Refinement then contracts preimages,
+$P_{O_2}(g) \subseteq P_{O_1}(g)$, so per-generator ambiguity $i_O(g)$ and its population
+mean $H(G \mid O)$ both fall---a one-line consequence, but one that turns ``more
+informative'' into an order rather than a scale.
+
+We instantiate the order exactly on all $1{,}500{,}625$ four-state partially observed
+Markov chains, enumerating every subset of hidden-state resets. Four findings. The
+passive experiment is a \emph{deterministic} coarsening of the full interventional one,
+confirmed exactly, so its $1.874$ bits of shortfall is precisely
+$I(G; O_I \mid O_P)$. Informativeness is genuinely partial, not total: a single reset
+leaves $4.504$ bits where passive observation leaves $3.245$, so one intervention is
+\emph{worse} than watching, while two are better. Which two matters enormously and the
+rule is structural---two resets inside one observational lump identify $0\%$ of the class,
+two that cross the lump identify $58.55\%$, at identical cost. And information gain is
+submodular across every triple we can form, which places greedy experiment selection on
+familiar footing.
+
+The organising claim is that resolving a mechanism is partition refinement, that the order
+on experiments controls its rate, and that the interventions worth buying are the ones
+that cross distinctions the observation map erases.
+\end{abstract}
+
+\section{Introduction}
+
+A companion paper~\cite{paper1} argues that identifiability should be measured rather than
+assumed, by counting the preimage $P_O(g) = \{h \in \HH : O(h) = O(g)\}$ of an observation
+map, and reports that identifiability and predictive uncertainty are distinct coordinates.
+It leaves a question open. Identifiability there is relative to a declared observation map
+and a declared class of admissible interventions, and changing that class moved $82\%$ of
+one hypothesis space between regimes. If knowability is regime-relative, the regimes
+themselves need a structure.
+
+They have one. Experiments are partially ordered by informativeness, and the order is old:
+Blackwell's comparison of experiments~\cite{blackwell1953} ranks one experiment above
+another when the second can be obtained from the first by a stochastic garbling. What we
+add is a finite, exactly enumerable instance in which the whole lattice can be computed
+rather than argued about, together with three empirical facts that are not consequences of
+the order alone.
+
+\section{The refinement order}
+
+Let $\HH$ be finite, $G$ uniform on $\HH$, and let $O_1, O_2$ be observation maps.
+
+\begin{definition}
+$O_1 \preceq O_2$ iff there is a map $F$ with $O_1 = F \circ O_2$.
+\end{definition}
+
+\begin{proposition}[Containment]\label{prop:contain}
+If $O_1 \preceq O_2$ then for every $g \in \HH$,
+$P_{O_2}(g) \subseteq P_{O_1}(g)$, hence $i_{O_2}(g) \le i_{O_1}(g)$ and
+$H(G \mid O_2) \le H(G \mid O_1)$.
+\end{proposition}
+\begin{proof}
+If $O_2(h) = O_2(g)$ then $O_1(h) = F(O_2(h)) = F(O_2(g)) = O_1(g)$. Containment gives the
+inequality on $\log_2$ of cardinalities pointwise, and averaging preserves it.
+\end{proof}
+
+\begin{proposition}[Value of refinement]\label{prop:value}
+If $O_1 \preceq O_2$ then
+$H(G \mid O_1) - H(G \mid O_2) = I(G; O_2 \mid O_1)$.
+\end{proposition}
+
+Proposition~\ref{prop:value} is what licenses reading a difference of conditional
+entropies as the information the finer experiment carries that the coarser one cannot
+reach. It requires the order; between incomparable experiments the difference is a
+comparison of two numbers and nothing more.
+
+\begin{proposition}[One-way migration]\label{prop:oneway}
+Classify generators by thresholds on $i_O(g)$ and on a behavioural coordinate $p_k(g)$.
+If $p_k$ is evaluated under an operating condition held fixed across $O_1 \preceq O_2$,
+then under refinement no generator can become less identifiable, and none can move in the
+behavioural coordinate.
+\end{proposition}
+
+This is worth stating because it bounds what a migration statistic can mean. Reported
+migration under refinement is necessarily one-dimensional and one-directional; it is not
+evidence of two-dimensional mobility.
+
+\section{The benchmark system}
+
+We reuse the family of~\cite[\S9]{paper1} rather than introduce another: hidden state
+$X_t \in \{0,1,2,3\}$, transition rows drawn from
+$\{0,\frac14,\frac12,\frac34,1\}$ summing to one ($35$ rows), all $35^4 = 1{,}500{,}625$
+generators enumerated completely, observation lumping $O(0)=O(1)=0$, $O(2)=O(3)=1$,
+horizon $T=6$. The passive experiment starts from the uniform hidden state. For
+$A \subseteq \{0,1,2,3\}$, the experiment $O_A$ resets the hidden state to each $j \in A$
+in turn and returns the resulting observable laws.
+
+\section{Results}
+
+\paragraph{The passive experiment is a deterministic coarsening.}
+Writing $L_j$ for the law obtained by resetting to state $j$, we verified exactly, over
+every generator, that
+\[
+  O_P \;=\; \tfrac14 \textstyle\sum_{j} L_j ,
+\]
+so $O_P \preceq O_{\{0,1,2,3\}}$ with a deterministic $F$. Proposition~\ref{prop:contain}
+then applies, and we confirm its conclusion computationally as an implementation check:
+zero containment violations across every pair $A \subset B$, and zero against the passive
+mixture.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Reset set $A$ & $H(G \mid O_A)$ & classes & $\Pr[i_{O_A}=0]$ & $\max |P|$ \\
+\midrule
+$\varnothing$ & 20.517 & 1 & $0.00\%$ & 1{,}500{,}625 \\
+any singleton & 4.504 & 400{,}584 & $0.00\%$ & 67{,}375 \\
+$\{0,1\}$ or $\{2,3\}$ & 3.356 & 482{,}902 & $0.00\%$ & 30{,}625 \\
+$\{0,2\},\{0,3\},\{1,2\},\{1,3\}$ & 2.618 & 967{,}107 & $58.55\%$ & 8{,}953 \\
+any triple & 1.914 & 1{,}101{,}899 & $69.84\%$ & 7{,}263 \\
+$\{0,1,2,3\}$ & 1.371 & 1{,}235{,}809 & $82.01\%$ & 6{,}561 \\
+\midrule
+passive (mixture) & 3.245 & 303{,}229 & $0.00\%$ & 7{,}537 \\
+\bottomrule
+\end{tabular}
+\caption{The intervention lattice, exact over $1{,}500{,}625$ generators. Rows within a
+group are identical to the digits shown, reflecting the symmetry of the construction.}
+\label{tab:lattice}
+\end{table}
+
+\paragraph{Informativeness is partial, not total.}
+A single reset leaves $4.504$ bits; passive observation leaves $3.245$. One intervention
+is \emph{less} identifying than watching a system you did not touch. There is no
+contradiction with Proposition~\ref{prop:contain}: $O_P$ is a coarsening of the full reset
+set, not of any singleton, so the two are incomparable in $\preceq$ and the proposition
+says nothing about them. Two resets ($2.618$) overtake passive; one does not. Any claim
+of the form ``intervention beats observation'' is therefore false as stated, and the
+correct statement is that the order is partial.
+
+\paragraph{The interventions that pay are those crossing the observation's kernel.}
+Let $x \sim_O y$ iff $O(x) = O(y)$, here $\{0,1\}$ and $\{2,3\}$. Two resets chosen inside
+one $\sim_O$ class leave $3.356$ bits and identify \emph{nothing}; two that cross leave
+$2.618$ bits and uniquely identify $58.55\%$ of the entire hypothesis class. The cost is
+identical. Greedy selection, run without knowledge of the lumping, chooses $0$, then $2$,
+then $3$, then $1$---crossing at the first opportunity.
+
+The mechanism is not mysterious: resets within a $\sim_O$ class differ only in a
+distinction the observation map already erases, so they re-ask a question the passive
+experiment has largely answered. We state it as a conjecture rather than a theorem, since
+we have measured it on one lumping of one family:
+\begin{quote}
+\emph{Crossing conjecture.} Interventions that separate states identified by $O$ are more
+informative about $G$ than interventions of equal cardinality confined within a single
+$\sim_O$ class.
+\end{quote}
+
+\paragraph{Information gain is submodular.}
+With $F(A) = H(G \mid O_\varnothing) - H(G \mid O_A)$, every one of the $108$ triples
+$A \subseteq B$, $j \notin B$ satisfies
+$F(A \cup \{j\}) - F(A) \ge F(B \cup \{j\}) - F(B)$, with no violations. Submodular
+maximisation under a cardinality constraint admits the classical $(1 - 1/e)$ greedy
+guarantee~\cite{nemhauser1978}, so where the property holds, greedy intervention selection
+is not merely a heuristic. The greedy gain sequence here is $16.013$, $1.886$, $0.704$,
+$0.543$ bits: the fourth reset is nearly redundant.
+
+\paragraph{The value of full intervention.}
+$H(G \mid O_P) - H(G \mid O_I) = 3.245 - 1.371 = 1.874$ bits, which by
+Proposition~\ref{prop:value} is exactly $I(G; O_I \mid O_P)$: the generator information the
+complete reset protocol carries that no amount of passive observation can reach.
+
+\section{Related work}
+
+The order is Blackwell's~\cite{blackwell1953}; our instance is its degenerate deterministic
+case. Choosing experiments to maximise expected information is Lindley's~\cite{lindley1956},
+and choosing interventions to secure identifiability is well developed in causal discovery,
+where optimal strategies are known~\cite{hauser2014}. The greedy guarantee for submodular
+objectives is~\cite{nemhauser1978}. What we contribute is not a new criterion but an
+exactly enumerated lattice: every experiment in a finite family, every containment relation
+checked rather than assumed, and the resulting empirical facts---incomparability, the
+crossing rule, submodularity---measured rather than argued.
+
+\section{Limitations}
+
+The lattice is computed on one family with one lumping, and the striking symmetry of
+Table~\ref{tab:lattice} is a property of that construction. The crossing conjecture is
+supported by a single $2{+}2$ lumping of four states and should not be treated as
+established. Submodularity is confirmed on $108$ triples in one family and is not proved;
+we do not know what conditions on $\HH$ and $O$ imply it, and that is the obvious next
+theorem. Identification is at horizon $T=6$, which is where the partition of this family
+stabilises~\cite[\S9]{paper1}, but stability over a finite window is evidence rather than
+proof. Proposition~\ref{prop:contain} is a theorem, so the computation confirming it tests
+our implementation, not the mathematics.
+
+\section{Discussion}
+
+Resolving a mechanism is partition refinement. Beginning with $[g] = \HH$, each experiment
+induces an equivalence relation and the cell containing the truth contracts,
+\[
+  \HH \supseteq [g]_{\Pi_1} \supseteq [g]_{\Pi_2} \supseteq \cdots ,
+\]
+with perfect resolution at $[g]_\Pi = \{g\}$ and irreducible ambiguity when the admissible
+lattice bottoms out while $|[g]_\Pi| > 1$. What the measurements add is that the rate of
+contraction is controlled by the order on experiments, that the order is partial rather
+than total---so more control is not uniformly more information---and that the experiments
+worth buying are the ones that cross the distinctions the observation map erases.
+
+\paragraph{Reproducibility.}
+\texttt{mgs\_lattice.py} produces every figure here; \texttt{audit.py} re-derives each
+against it. Both are in the repository accompanying~\cite{paper1}.
+
+\begin{thebibliography}{9}
+\bibitem{blackwell1953} D. Blackwell. Equivalent comparisons of experiments.
+\emph{Annals of Mathematical Statistics}, 24(2):265--272, 1953.
+\bibitem{hauser2014} A. Hauser and P. B\"uhlmann. Two optimal strategies for active
+learning of causal models from interventional data. \emph{International Journal of
+Approximate Reasoning}, 55(4):926--939, 2014.
+\bibitem{lindley1956} D. V. Lindley. On a measure of the information provided by an
+experiment. \emph{Annals of Mathematical Statistics}, 27(4):986--1005, 1956.
+\bibitem{nemhauser1978} G. L. Nemhauser, L. A. Wolsey, and M. L. Fisher. An analysis of
+approximations for maximizing submodular set functions---I. \emph{Mathematical
+Programming}, 14(1):265--294, 1978.
+\bibitem{paper1} G. J. Ward, B. W. Daugherty, and S. M. Ryan. Identifiability and
+predictability are distinct: measured preimages across generative systems, 2026.
+Unpublished draft.
+\end{thebibliography}
+
+\end{document}

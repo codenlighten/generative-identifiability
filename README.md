@@ -84,6 +84,19 @@ Q = Q(S, 𝒜, Σ, O)      not      Q(S)
 *Identifiable* and *predictable* are not intrinsic labels on a mechanism. They describe it
 relative to an observation and intervention regime and a declared prediction target.
 
+## Papers
+
+- **Paper 1** — [`identifiability.tex`](identifiability.tex) /
+  [`identifiability.pdf`](identifiability.pdf). *Identifiability and Predictability Are
+  Distinct: Measured Preimages Across Generative Systems.* The measurement framework and
+  the two-coordinate thesis, with the pre-registered Markov experiment as the
+  load-bearing result.
+- **Paper 2** — [`paper2.tex`](paper2.tex) / [`paper2.pdf`](paper2.pdf). *The Information
+  Order of Experiments: Intervention Lattices and Generator Identifiability.* The order
+  structure on observations: refinement contracts preimages, informativeness is partial
+  rather than total, the interventions that pay are those crossing the observation's
+  kernel, and information gain is submodular.
+
 ## Running it
 
 Python 3, standard library only, except `mgs_preregistered.py` which needs NumPy.
