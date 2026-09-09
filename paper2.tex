@@ -361,11 +361,53 @@ The equally sized random class compresses nowhere. So Experiment~26's result is 
 about the hypothesis class, not about interventions: \emph{an intervention is redundant
 exactly when the generators carry a dependency that makes it so.}
 
-Two dissociations follow, and together they say where each structure lives. Changing the
-observation map moves the rank values $r(A)$ but leaves the basis untouched; introducing a
-dependency among generators leaves the qualitative rank profile recognisable but collapses
-the basis. The experiment family has a small informational basis precisely when the
-generator family is constrained.
+It is tempting to read this as a clean separation---observation sets the rank magnitudes,
+hypothesis-class structure sets the basis---and an earlier version of this paper said so.
+Experiment~28 refutes it. Repeating the comparison across six classes and all $14$
+partitions, the basis is invariant under the observation map for the equality and adjacent
+ties, but \emph{varies} for a permutation tie $R_3 = \pi(R_0)$ and for a two-row derived
+constraint $R_3 = f(R_0, R_1)$. So the observation map can change basis structure, for some
+dependency types and not others, and characterising which is open.
+
+\paragraph{Which generator dependencies survive the observation map.}
+A constraint among generator coordinates need not become a functional dependency among
+reset outputs, because $Z_j$ is a function of the whole generator and not of row $j$ alone.
+We made this precise with two closure operators, both tested by exact integer class counts:
+$\operatorname{cl}_G(A) = \{j : H(R_j \mid R_A) = 0\}$ among generator coordinates and
+$\operatorname{cl}_Z(A) = \{j : H(Z_j \mid Z_A) = 0\}$ among reset outputs.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llrll}
+\toprule
+Class & constraint & $|\HH|$ & minimal bases & basis invariant in $O$ \\
+\midrule
+FREE     & none                        & 10{,}000 & $\{0,1,2,3\}$ & yes \\
+EQUAL    & $R_3 = R_0$                 & 1{,}000  & $\{0,1,2\},\{1,2,3\}$ & yes \\
+PERM     & $R_3 = \pi(R_0)$            & 1{,}000  & $\{0,1,2\},\{1,2,3\}$ & \textbf{no} \\
+DERIVED  & $R_3 = f(R_0,R_1)$          & 1{,}000  & $\{0,1,2\},\{0,2,3\},\{1,2,3\}$ & \textbf{no} \\
+ADJACENT & $R_2 = R_1$                 & 1{,}000  & $\{0,1,3\},\{0,2,3\}$ & yes \\
+RANDOM   & size-matched control        & 1{,}000  & $\{0,1,2,3\}$ & yes \\
+\bottomrule
+\end{tabular}
+\caption{Six hypothesis classes, five at identical cardinality. Which rows are tied
+determines which resets become droppable; a two-row constraint yields three bases rather
+than two.}
+\label{tab:dependency}
+\end{table}
+
+Two pre-registered criteria failed, and both failures are informative. The inclusion
+$\operatorname{cl}_G(A) \subseteq \operatorname{cl}_Z(A)$ is \emph{false}: $181$
+violations. The mechanism is transparent once seen---under $R_3 = R_0$ we have
+$3 \in \operatorname{cl}_G(\{0\})$, but $Z_3$ also depends on rows $1$ and $2$, so $Z_0$
+alone cannot determine it. A coordinate dependency is not an output dependency.
+
+The converse count is $0$. Across every class, partition and subset, no $j$ lay in
+$\operatorname{cl}_Z(A)$ without lying in $\operatorname{cl}_G(A)$: the observation map
+never manufactured a dependency, only destroyed them. We report
+$\operatorname{cl}_Z(A) \subseteq \operatorname{cl}_G(A)$ as an empirical regularity over
+$6 \times 14 \times 16$ cases rather than a theorem, since we have no proof and $Z_j$'s
+dependence on the full generator does not obviously force it.
 
 \paragraph{The value of full intervention.}
 $H(G \mid O_P) - H(G \mid O_I) = 3.245 - 1.371 = 1.874$ bits, which by
@@ -386,9 +428,11 @@ crossing rule, submodularity---measured rather than argued.
 \section{Limitations}
 
 The lattice is computed on one family with one lumping, and the striking symmetry of
-Table~\ref{tab:lattice} is a property of that construction. The compression results of
-Table~\ref{tab:structure} use one dependency---a single tied row---and we have not
-characterised which dependencies produce which bases. The crossing conjecture is refuted in general and survives only for equal-block
+Table~\ref{tab:lattice} is a property of that construction. We do not know which dependency types make the basis
+observation-dependent: Table~\ref{tab:dependency} shows equality and adjacent ties are
+invariant while permutation and two-row derived constraints are not, and four classes are
+too few to see the pattern. The regularity
+$\operatorname{cl}_Z \subseteq \operatorname{cl}_G$ is unproved. The crossing conjecture is refuted in general and survives only for equal-block
 partitions; the exact selection rule $\Delta(j \mid A) = H(Z_j \mid Z_A)$ replaces it, but we have no
 structural characterisation of when that quantity is large, which is the open problem this
 paper leaves. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact

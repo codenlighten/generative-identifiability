@@ -317,6 +317,27 @@ C("E27_Y2", "pre-registered Y2 verdict", "EXH", X,
 C("E27_TIED_BASIS_SIZE", "minimal basis size in the tied class", "EXH", X,
   grab(X, r"^  023\|1\s+[\d,]+\s+[\d.]+%\s+(\d+)\s+\{0,1,2\}"), "3")
 
+# --- E28, dependency taxonomy ---
+Y = "mgs_dependency.py"
+C("E28_Z2_VERDICT", "pre-registered Z2 verdict (basis invariance in O)", "EXH", Y,
+  grab(Y, r"invariant across observation partitions, every class:\s+(PASS|FAIL)"), "FAIL")
+C("E28_Z3_VERDICT", "pre-registered Z3 verdict (cl_G subset cl_Z)", "EXH", Y,
+  grab(Y, r"cl_G\(A\) subset cl_Z\(A\) always:\s+(PASS|FAIL)"), "FAIL")
+C("E28_Z3_VIOLATIONS", "cl_G(A) not subset cl_Z(A), violation count", "EXH", Y,
+  grab(Y, r"cl_Z\(A\) always:\s+\w+\s+\((\d+) violations\)"), "181")
+C("E28_CREATED_DEPENDENCIES", "dependencies in cl_Z absent from cl_G", "EXH", Y,
+  grab(Y, r"observation-created\): (\d+)"), "0")
+C("E28_FREE_BASIS", "FREE class minimal basis", "EXH", Y,
+  grab(Y, r"FREE      \|H\|.*\n.*minimal intervention bases: (\{[\d,]+\})"), "{0,1,2,3}")
+C("E28_EQUAL_INVARIANT", "EQUAL class basis invariance", "EXH", Y,
+  grab(Y, r"^        EQUAL     (\w+)"), "invariant")
+C("E28_PERM_INVARIANT", "PERM class basis invariance", "EXH", Y,
+  grab(Y, r"^        PERM      (\w+)"), "VARIES")
+C("E28_DERIVED_INVARIANT", "DERIVED class basis invariance", "EXH", Y,
+  grab(Y, r"^        DERIVED   (\w+)"), "VARIES")
+C("E28_RANDOM_INVARIANT", "RANDOM control basis invariance", "EXH", Y,
+  grab(Y, r"^        RANDOM    (\w+)"), "invariant")
+
 # ---------------------------------------------------------------- report
 w = max(len(c[1]) for c in CLAIMS)
 print("=" * (w + 54))
