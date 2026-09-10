@@ -77,8 +77,8 @@ add is a finite, exactly enumerable instance in which the whole lattice can be c
 rather than argued about. Much of what earlier drafts of this paper reported as empirical
 has since become theorem or implementation check---submodularity, kernel contraction, the
 lumpable kernel dimension---and one conjecture was refuted outright. What survives as
-measurement is narrower and we state it plainly: that informativeness is a genuine partial
-order, with a single intervention less identifying than passive observation; that
+measurement is narrower and we state it plainly: that the informativeness preorder is
+genuinely non-total, with a single intervention less identifying than passive observation; that
 experimental redundancy tracks the dependency structure of the hypothesis class rather than
 its cardinality, so which resets are droppable changes with the constraint and not with
 $|\HH|$; and that the belief-observability kernel can strictly contain the span of pairwise
@@ -210,7 +210,7 @@ only two are comparabilities:
 Passive is a garbling of the full reset protocol, but neither passive nor a single reset is
 a garbling of the other, so their entropies may fall in either order and here they fall the
 surprising way. Any claim of the form ``intervention beats observation'' is false as
-stated; the correct statement is that informativeness is a partial order.
+stated; the correct statement is that the informativeness preorder is non-total.
 
 \paragraph{The interventions that pay are those crossing the observation's kernel.}
 Let $x \sim_O y$ iff $O(x) = O(y)$, here $\{0,1\}$ and $\{2,3\}$. Two resets chosen inside
@@ -344,7 +344,8 @@ from $9.892$ to $13.288$ bits, while the basis structure does not vary at all. W
 observation map changes is how much the experiments tell you, not which of them are
 needed.
 
-\paragraph{Compression exists, but it is a property of the hypothesis class.}
+\paragraph{Compression can be induced by structure in the hypothesis class rather than
+by cardinality alone.}
 The absence of compression above is suspicious, because $\HH = \mathrm{ROWS}^4$ is a
 product: the four transition rows are chosen independently, which is exactly the structure
 that should resist it. We therefore compared three classes on the same system and the same
@@ -373,8 +374,11 @@ every partition while a random class of identical size compresses in none.}
 The tied class compresses in every partition, always to a basis of size three, and always
 by omitting one of the two tied states---never states $1$ or $2$, whose rows remain free.
 The equally sized random class compresses nowhere. So Experiment~26's result is a statement
-about the hypothesis class, not about interventions: \emph{an intervention is redundant
-exactly when the generators carry a dependency that makes it so.}
+about the hypothesis class rather than about interventions: in this tied-row construction
+intervention redundancy is \emph{inherited} from a structural dependency in the hypothesis
+class, and the size-matched random control shows that cardinality alone does not produce
+it. This is a sufficient mechanism, not a characterisation: the lumpable construction below
+exhibits redundancy with no generator dependency to inherit at all.
 
 It is tempting to read this as a clean separation---observation sets the rank magnitudes,
 hypothesis-class structure sets the basis---and an earlier version of this paper said so.
