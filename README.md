@@ -115,9 +115,19 @@ Three things it deliberately gets right, which are the point of the demonstratio
   distribution.** No forward model, no information calculation — the contract is enforced
   rather than papered over.
 - **It certifies permanence through the joint chain, not the hypothesis-level plateau.**
-  A plateau only implies permanence when there is one shared transition operator, and
-  each mechanism has its own. The certificate embeds the family as a single hidden Markov
-  chain on (mechanism, device state) where the theorem genuinely applies.
+  A plateau only implies permanence when there is one shared transition operator, and each
+  mechanism has its own. A family of models is not a dynamical system until it is lifted
+  into the joint state space `(h, x)`, where the mechanism identity becomes a persistent
+  hidden coordinate and the transition matrix is block diagonal. The bridge is one line:
+  for hypothesis `h` with initial device distribution `μ_h`, the embedding
+  `J : v ↦ w`, `w_(h,x) = v_h · μ_h(x)`, satisfies `Σ_h v_h L_h(T) = w B_T(joint)`
+  identically, so `K_T(hypothesis) = J⁻¹(K_T(joint))` for every `T` — and once the joint
+  kernel reaches its limit, so does the hypothesis-level kernel it determines. The demo
+  verifies that embedding on its own kernel basis rather than asserting it.
+- **The certificate is a detected plateau, not an exhaustive watch.** The worst-case bound
+  here is `T ≤ 39 − 2 + 1 = 38`, but the joint kernel plateaus at `T = 6`. The claim is not
+  "we watched to 38" — it is "we found a plateau at 6, and the theorem says a plateau
+  cannot later break." That distinction is what makes the certificate cheap.
 - **It separates EXACT from APPROXIMATE mode.** Only exact rational arithmetic over a
   finite class may report CERTIFIED; estimated laws may report expected information gain
   and must never claim permanent impossibility.

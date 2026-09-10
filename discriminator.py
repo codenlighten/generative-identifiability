@@ -205,40 +205,67 @@ def main():
 
     # ---- what passive observation can never resolve ----
     #
-    # The kernel of the hypothesis-level law matrix says which MIXTURES of
-    # mechanisms observation cannot separate. Its stabilisation, however, is
-    # NOT certified by a plateau at this level: the plateau argument needs a
-    # single shared transition operator, and each hypothesis has its own. We
-    # certify instead through the joint chain, where the theorem does apply:
-    # (mechanism, device state) is one hidden Markov chain whose transition is
-    # block diagonal -- the fault does not change -- and whose emission depends
-    # only on the device state.
+    # DEVELOPMENT NOTE, kept deliberately. The first version of this demo
+    # certified permanence from a plateau in the HYPOTHESIS-level kernel. That
+    # is wrong: the plateau argument needs one shared transition operator, and
+    # each mechanism has its own. A family of models is not a dynamical system
+    # until it is lifted into the joint state space (h, x), where the mechanism
+    # identity becomes a persistent hidden coordinate and the transition matrix
+    # is block diagonal. Only after that lift does the common-operator theorem
+    # apply. The lift is also what lets a fixed-generator observability result
+    # operate on a family of competing dynamics at all.
+    #
+    # The bridge is one line. For hypothesis h with initial device distribution
+    # mu_h, define the fixed linear embedding
+    #
+    #     J : v |-> w,     w_(h,x) = v_h * mu_h(x).
+    #
+    # Then sum_h v_h L_h^(T) = w B_T^joint identically, so
+    #
+    #     K_T^H = J^{-1}( K_T^joint )
+    #
+    # for every T. Hence once the joint kernel reaches its limit, so does the
+    # hypothesis-level kernel it determines.
     names = [h.name for h in live]
-    B = [list(h.law(T)) for h in live]
-    K = left_kernel(B)
 
     n_joint = len(live) * NS
     rank_C = max(SENSOR) + 1
     bound = n_joint - rank_C + 1
 
-    def joint_kernel_dim(t):
+    def joint_rows(t):
         rows = []
         for h in live:
             for x in range(NS):
                 st = [F(1) if u == x else F(0) for u in range(NS)]
                 rows.append(list(h.law(t, start=st)))
-        return len(left_kernel(rows))
+        return rows
 
-    jdims = [joint_kernel_dim(t) for t in range(1, 9)]
+    jdims = [len(left_kernel(joint_rows(t))) for t in range(1, 9)]
     jstab = next((t for t in range(1, len(jdims)) if jdims[t-1] == jdims[t]), None)
 
     hdims = [len(left_kernel([list(h.law(t)) for h in live])) for t in range(1, 9)]
+    T_cert = jstab if jstab else len(hdims)
+    B = [list(h.law(T_cert)) for h in live]
+    K = left_kernel(B)
+
+    # verify the embedding J maps hypothesis-kernel vectors into the joint kernel
+    jrows = joint_rows(T_cert)
+    embed_ok = True
+    for v in K:
+        w = [v[i] * live[i].start[x] for i in range(len(live)) for x in range(NS)]
+        prod = [sum(w[r] * jrows[r][c] for r in range(len(w)))
+                for c in range(len(jrows[0]))]
+        if any(z != 0 for z in prod):
+            embed_ok = False
 
     print("\nPASSIVE OBSERVABILITY\n")
     print(f"  Mixture directions hidden, by horizon: " +
           ", ".join(f"T={t}:{d}" for t, d in enumerate(hdims, 1)))
-    print(f"  Transiently hidden:  {hdims[0] - hdims[-1]}")
-    print(f"  Structurally hidden: {hdims[-1]}")
+    print(f"  Transiently hidden:  {hdims[0] - len(K)}   (dissolve as the horizon grows)")
+    print(f"  Structurally hidden: {len(K)}   (certified at T = {T_cert}, see below)")
+    if jstab:
+        print(f"  Hypothesis-level kernel is unchanged from T = {T_cert} to "
+              f"T = {T_cert+1}: {hdims[T_cert-1] == hdims[T_cert]}")
     if K:
         print("\n  Conclusion (sparsest relations first):")
         for v in sorted(K, key=lambda w: sum(1 for c in w if c != 0))[:3]:
@@ -286,9 +313,9 @@ def main():
     # ---- the proof layer ----
     print("\nCERTIFICATE\n")
     if MODE != "EXACT":
-        print("  status:   ESTIMATED -- approximate mode may not certify impossibility.")
+        print("  status:    ESTIMATED -- approximate mode may not certify impossibility.")
     elif not K:
-        print("  status:   no kernel; nothing to certify.")
+        print("  status:    no kernel; nothing to certify.")
     else:
         v = K[0]
         prod = [sum(v[i] * B[i][j] for i in range(len(B))) for j in range(len(B[0]))]
@@ -298,19 +325,30 @@ def main():
         print(f"  check:     v B_T = 0  ->  {all(x == 0 for x in prod)}")
         print(f"  sum:       sum(v) = {sum(v)}   (probability-preserving direction)")
         print()
-        print(f"  permanence is certified through the joint chain, not by the")
-        print(f"  hypothesis-level plateau -- the plateau argument requires one")
-        print(f"  shared transition operator and each mechanism has its own:")
+        print(f"  Why this is permanent and not merely unobserved so far.")
+        print(f"  A family of models is not one dynamical system. Lift it: the joint")
+        print(f"  hidden state is (mechanism, device state), the transition is block")
+        print(f"  diagonal because the fault does not change, and the emission depends")
+        print(f"  only on the device state. The theorem applies to that chain.")
         print(f"    joint chain:      {len(live)} mechanisms x {NS} device states "
               f"= {n_joint} hidden states")
         print(f"    emission rank:    {rank_C}")
-        print(f"    horizon bound:    T_obs <= n - rank(C) + 1 = {bound}")
         print(f"    joint kernel dim: " +
               ", ".join(f"T={t}:{d}" for t, d in enumerate(jdims, 1)))
+        print()
+        print(f"    embedding J: v |-> w,  w_(h,x) = v_h * mu_h(x)")
+        print(f"      gives  sum_h v_h L_h(T) = w B_T(joint)  identically,")
+        print(f"      hence  K_T(hypothesis) = J^-1( K_T(joint) )  for every T.")
+        print(f"      verified on this kernel basis: {embed_ok}")
+        print()
         if jstab:
-            print(f"    joint kernel stabilised at T = {jstab}; one plateau of the")
-            print(f"    joint chain is permanent, so the hypothesis-level kernel it")
-            print(f"    determines is final too.")
+            print(f"    worst-case certification horizon:  {bound}   "
+                  f"(= n - rank(C) + 1)")
+            print(f"    actual certified stabilisation:    {jstab}")
+            print(f"    We did not watch to {bound}. We detected a plateau at "
+                  f"T = {jstab}, and")
+            print(f"    the theorem says a plateau cannot later break; J^-1 carries")
+            print(f"    that finality to the hypothesis level.")
         else:
             print(f"    joint kernel had not plateaued by T = {len(jdims)};")
             print(f"    NOT CERTIFIED -- run to the bound of {bound} to decide.")
