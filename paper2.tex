@@ -50,9 +50,14 @@ known. And because the exact experiment outputs are
 deterministic functions of the generator, information gain is monotone submodular by
 Shannon's inequality, placing greedy selection on familiar footing.
 
-The organising claim is that resolving a mechanism is partition refinement, that the order
-on experiments controls its rate, and that the value of an intervention is the conditional
-information it contributes beyond the experiments already performed.
+The organising claim is that a finite generator-identification problem induces two
+complementary structures: an information order over experiments, governing contraction of
+generator preimages, and a belief-observability kernel, governing which hidden-state
+mixture directions remain invisible. The former yields an entropic polymatroid and a
+conditional-information selection rule; the latter yields a finite-horizon certificate for
+permanent observational blindness. We connect these views in one exactly enumerable setting
+without claiming novelty for the underlying Blackwell, submodular, or finite-rank
+machinery.
 \end{abstract}
 
 \section{Introduction}
@@ -69,8 +74,16 @@ They have one. Experiments are partially ordered by informativeness, and the ord
 Blackwell's comparison of experiments~\cite{blackwell1953} ranks one experiment above
 another when the second can be obtained from the first by a stochastic garbling. What we
 add is a finite, exactly enumerable instance in which the whole lattice can be computed
-rather than argued about, together with three empirical facts that are not consequences of
-the order alone.
+rather than argued about. Much of what earlier drafts of this paper reported as empirical
+has since become theorem or implementation check---submodularity, kernel contraction, the
+lumpable kernel dimension---and one conjecture was refuted outright. What survives as
+measurement is narrower and we state it plainly: that informativeness is a genuine partial
+order, with a single intervention less identifying than passive observation; that
+experimental redundancy tracks the dependency structure of the hypothesis class rather than
+its cardinality, so which resets are droppable changes with the constraint and not with
+$|\HH|$; and that the belief-observability kernel can strictly contain the span of pairwise
+state equivalences, so a hidden-state \emph{mixture} may be permanently invisible in a
+system that distinguishes every pair of states.
 
 \section{The refinement order}
 
@@ -764,9 +777,15 @@ The lattice is computed on one family with one lumping, and the striking symmetr
 Table~\ref{tab:lattice} is a property of that construction. One comparison is outstanding and should be settled before this is circulated widely. Ito,
 Amari and Kobayashi~\cite{ito1992} solve identifiability for hidden Markov processes by
 linear algebra and introduce a $\Delta$-subspace characterising the effective minimum
-degree of the process. We have not compared their construction with $K_\infty$ in detail,
-and it is entirely possible that the belief-observability kernel is a dual, annihilator, or
-otherwise equivalent presentation of an object already implicit there. Nothing in this
+degree of the process. We attempted this comparison and could not complete it: the
+construction is behind a paywall in both the IEEE and the Electronics and Communications in
+Japan printings, and the open-access sources we reached describe the result only as
+``identifiability is completely solved by linear algebra, where a block structure of the
+transition matrix plays a fundamental role'' without giving the subspace definition. The
+comparison therefore requires the primary text and remains undone. On the evidence
+available it is entirely possible that the belief-observability kernel is a dual,
+annihilator, or otherwise equivalent presentation of an object already implicit there, and
+a reader with access should treat establishing that as the first task. Nothing in this
 paper should be read as claiming the kernel notion is new; the wording throughout is that
 it is recovered in the notation of the preimage framework.
 
@@ -776,8 +795,14 @@ two-row constraints are fragile, which is a pattern with $n = 4$. The lumpable
 construction of Table~\ref{tab:pdc} is one aggregation matched to one partition, and we
 have not characterised which quotients create dependencies for which classes. The crossing conjecture is refuted in general and survives only for equal-block
 partitions; the exact selection rule $\Delta(j \mid A) = H(Z_j \mid Z_A)$ replaces it, but we have no
-structural characterisation of when that quantity is large, which is the open problem this
-paper leaves. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact
+structural characterisation of when that quantity is large. The kernel machinery does not
+answer it: the two sides of this paper leave two distinct open problems, and it would be a
+mistake to read the second as having settled the first. On the generator side, we do not
+know what structural features of $(\HH, O)$ make the conditional novelty $H(Z_j \mid Z_A)$
+large, which is the experiment-value question. On the belief side, we do not know how
+$K_\infty$ relates to the minimal-realisation subspaces of the hidden Markov literature,
+which is an observability question. They are connected---both are driven by what the
+observation erases---but they are not the same object and neither reduces to the other. Submodularity is a theorem here (Proposition~\ref{prop:submod}) and holds whenever exact
 experiment outputs are deterministic functions of the generator; it would need revisiting
 for noisy or sampled observations, where $H(Z_A \mid G) > 0$ and the identity
 $F(A) = H(Z_A)$ fails. Identification is at horizon $T=6$, which is where the partition of this family
