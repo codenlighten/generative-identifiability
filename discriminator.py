@@ -145,6 +145,16 @@ def experiments():
 
 
 # ------------------------------------------------------------------- machinery
+def residual_ambiguity(labels):
+    """H(G|O) -- the paper's quantity: expected log preimage size under a
+    uniform prior over the surviving mechanisms. NOT the entropy of the
+    observable-law partition, which is the information the law RESOLVES."""
+    c = defaultdict(int)
+    for l in labels: c[l] += 1
+    n = len(labels)
+    return sum(v * math.log2(v) for v in c.values()) / n
+
+
 def entropy_of_partition(labels):
     c = defaultdict(int)
     for l in labels: c[l] += 1
@@ -175,35 +185,18 @@ def left_kernel(rows):
 def main():
     H = build()
     EXPTS = experiments()
-    T = 4
-    evidence = None                       # observed trace filter, if any
 
     print("=" * 66)
     print(f"ModelDiscriminator            mode: {MODE}")
     print("=" * 66)
 
-    # ---- which hypotheses survive the evidence ----
-    laws = {h.name: h.law(T) for h in H}
     # evidence: the first telemetry reading was nominal, which rules out any
     # mechanism that starts the device already in the fault state
-    def consistent(h):
-        return h.start[2] == 0
-    live = [h for h in H if consistent(h)]
+    live = [h for h in H if h.start[2] == 0]
+    names = [h.name for h in live]
+    N = len(live)
 
-    by_law = defaultdict(list)
-    for h in live: by_law[laws[h.name]].append(h.name)
-    amb = entropy_of_partition([laws[h.name] for h in live])
-
-    print("\nINFERENCE STATUS\n")
-    print(f"  Candidate mechanisms:      {len(H)}")
-    print(f"  Consistent with evidence:  {len(live)}")
-    print(f"  Distinguishable classes:   {len(by_law)}")
-    print(f"  Mechanism ambiguity:       {amb:.3f} bits")
-    for law, names in by_law.items():
-        if len(names) > 1:
-            print(f"    indistinguishable passively: {', '.join(names)}")
-
-    # ---- what passive observation can never resolve ----
+    # ---- certify the horizon FIRST, so one partition is authoritative -------
     #
     # DEVELOPMENT NOTE, kept deliberately. The first version of this demo
     # certified permanence from a plateau in the HYPOTHESIS-level kernel. That
@@ -211,62 +204,61 @@ def main():
     # each mechanism has its own. A family of models is not a dynamical system
     # until it is lifted into the joint state space (h, x), where the mechanism
     # identity becomes a persistent hidden coordinate and the transition matrix
-    # is block diagonal. Only after that lift does the common-operator theorem
-    # apply. The lift is also what lets a fixed-generator observability result
-    # operate on a family of competing dynamics at all.
+    # is block diagonal. Only after that lift does the theorem apply.
     #
     # The bridge is one line. For hypothesis h with initial device distribution
     # mu_h, define the fixed linear embedding
-    #
     #     J : v |-> w,     w_(h,x) = v_h * mu_h(x).
-    #
-    # Then sum_h v_h L_h^(T) = w B_T^joint identically, so
-    #
-    #     K_T^H = J^{-1}( K_T^joint )
-    #
-    # for every T. Hence once the joint kernel reaches its limit, so does the
-    # hypothesis-level kernel it determines.
-    names = [h.name for h in live]
-
-    n_joint = len(live) * NS
-    rank_C = max(SENSOR) + 1
+    # Then sum_h v_h L_h(T) = w B_T(joint) identically, so
+    #     K_T(hypothesis) = J^-1( K_T(joint) )   for every T,
+    # and once the joint kernel reaches its limit so does the one it determines.
+    n_joint, rank_C = N * NS, max(SENSOR) + 1
     bound = n_joint - rank_C + 1
 
     def joint_rows(t):
-        rows = []
-        for h in live:
-            for x in range(NS):
-                st = [F(1) if u == x else F(0) for u in range(NS)]
-                rows.append(list(h.law(t, start=st)))
-        return rows
+        return [list(h.law(t, start=[F(1) if u == x else F(0) for u in range(NS)]))
+                for h in live for x in range(NS)]
 
     jdims = [len(left_kernel(joint_rows(t))) for t in range(1, 9)]
     jstab = next((t for t in range(1, len(jdims)) if jdims[t-1] == jdims[t]), None)
+    T_cert = jstab if jstab else len(jdims)
 
-    hdims = [len(left_kernel([list(h.law(t)) for h in live])) for t in range(1, 9)]
-    T_cert = jstab if jstab else len(hdims)
-    B = [list(h.law(T_cert)) for h in live]
-    K = left_kernel(B)
-
-    # verify the embedding J maps hypothesis-kernel vectors into the joint kernel
-    jrows = joint_rows(T_cert)
-    embed_ok = True
-    for v in K:
-        w = [v[i] * live[i].start[x] for i in range(len(live)) for x in range(NS)]
-        prod = [sum(w[r] * jrows[r][c] for r in range(len(w)))
-                for c in range(len(jrows[0]))]
-        if any(z != 0 for z in prod):
-            embed_ok = False
-
-    # Split the certified kernel into the part any pairwise comparison would
-    # find and the part it would not. The split is basis-independent: D is the
-    # span of the differences of passively identical mechanisms, D is contained
-    # in K always, and dim K - dim D counts genuine higher-order relations.
+    # the single authoritative passive partition, at the certified horizon
+    laws = {h.name: h.law(T_cert) for h in live}
+    labels = [laws[h.name] for h in live]
     cls = defaultdict(list)
     for i, h in enumerate(live):
-        cls[tuple(h.law(T_cert))].append(i)
-    pairs = [(g[0], j) for g in cls.values() for j in g[1:]]
-    dim_D = len(pairs)
+        cls[laws[h.name]].append(i)
+
+    total = math.log2(N)
+    resolved = entropy_of_partition(labels)
+    residual = residual_ambiguity(labels)
+
+    print("\nINFERENCE STATUS\n")
+    print(f"  Candidate mechanisms:          {len(H)}")
+    print(f"  Consistent with evidence:      {N}")
+    print(f"  Certified passive classes:     {len(cls)}"
+          f"   (what passive observation can ever separate, among those {N})")
+    print()
+    print(f"  Total mechanism uncertainty:   {total:.3f} bits")
+    print(f"  Resolved by the passive law:   {resolved:.3f} bits")
+    print(f"  Residual ambiguity H(G|O):     {residual:.3f} bits")
+
+    # ---- what passive observation can never resolve -------------------------
+    hdims = [len(left_kernel([list(h.law(t)) for h in live])) for t in range(1, 9)]
+    B = [list(laws[h.name]) for h in live]
+    K = left_kernel(B)
+
+    embed_ok = True
+    jrows = joint_rows(T_cert)
+    for v in K:
+        w = [v[i] * live[i].start[x] for i in range(N) for x in range(NS)]
+        if any(sum(w[r] * jrows[r][c] for r in range(len(w))) != 0
+               for c in range(len(jrows[0]))):
+            embed_ok = False
+
+    groups = [g for g in cls.values() if len(g) > 1]
+    dim_D = sum(len(g) - 1 for g in groups)
     dim_hi = len(K) - dim_D
 
     print("\nPASSIVE OBSERVABILITY\n")
@@ -279,7 +271,6 @@ def main():
     print(f"\n  These are directions in mechanism-mixture space, not mechanisms.")
     print(f"  They decompose as:")
     print(f"    pairwise-equivalence directions: {dim_D}")
-    groups = [g for g in cls.values() if len(g) > 1]
     if groups:
         gl = ", ".join("/".join(names[i] for i in g) for g in groups)
         print(f"      from equivalence classes: {gl}")
@@ -287,39 +278,33 @@ def main():
               f" m(m-1)/2 pairs)")
     print(f"    higher-order mixture directions: {dim_hi}"
           + ("   (no pairwise comparison finds these)" if dim_hi else ""))
-    if K:
-        # Present the pairwise relations first, then extend to a full basis of K.
-        # The extension vectors are exactly the higher-order ones: relations no
-        # comparison of two mechanisms could ever surface.
-        def independent_extension(fixed, candidates):
-            basis, out = [row[:] for row in fixed], []
-            def rank(rows):
-                if not rows: return 0
-                m = [[F(x) for x in r] for r in rows]
-                R, Cn, rr = len(m), len(m[0]), 0
-                for c in range(Cn):
-                    pv = next((i for i in range(rr, R) if m[i][c] != 0), None)
-                    if pv is None: continue
-                    m[rr], m[pv] = m[pv], m[rr]
-                    d = m[rr][c]; m[rr] = [x / d for x in m[rr]]
-                    for i in range(R):
-                        if i != rr and m[i][c] != 0:
-                            f = m[i][c]
-                            m[i] = [a - f * b for a, b in zip(m[i], m[rr])]
-                    rr += 1
-                return rr
-            for v in candidates:
-                if rank(basis + [v]) > rank(basis):
-                    basis.append(list(v)); out.append(list(v))
-            return out
 
-        pair_vecs = [[F(1) if i == a else (F(-1) if i == b else F(0))
-                      for i in range(len(live))] for a, b in pairs]
-        hi_vecs = independent_extension(pair_vecs, K)
+    if K:
+        def rank(rows):
+            if not rows: return 0
+            m = [[F(x) for x in r] for r in rows]
+            R, Cn, rr = len(m), len(m[0]), 0
+            for c in range(Cn):
+                pv = next((i for i in range(rr, R) if m[i][c] != 0), None)
+                if pv is None: continue
+                m[rr], m[pv] = m[pv], m[rr]
+                d = m[rr][c]; m[rr] = [x / d for x in m[rr]]
+                for i in range(R):
+                    if i != rr and m[i][c] != 0:
+                        f = m[i][c]
+                        m[i] = [a - f * b for a, b in zip(m[i], m[rr])]
+                rr += 1
+            return rr
+        pair_vecs = [[F(1) if i == g[0] else (F(-1) if i == j else F(0))
+                      for i in range(N)] for g in groups for j in g[1:]]
+        basis, hi_vecs = [r[:] for r in pair_vecs], []
+        for v in K:
+            if rank(basis + [list(v)]) > rank(basis):
+                basis.append(list(v)); hi_vecs.append(list(v))
 
         def show(v, kind):
-            pos = [(names[i], v[i]) for i in range(len(v)) if v[i] > 0]
-            neg = [(names[i], -v[i]) for i in range(len(v)) if v[i] < 0]
+            pos = [(names[i], v[i]) for i in range(N) if v[i] > 0]
+            neg = [(names[i], -v[i]) for i in range(N) if v[i] < 0]
             fmt = lambda t: " + ".join(f"{c}*{n}" if c != 1 else n for n, c in t)
             print(f"    {kind} no passive trace separates  {fmt(pos)}  from  {fmt(neg)}")
 
@@ -334,17 +319,16 @@ def main():
     else:
         print("\n  Passive observation can in principle separate every candidate.")
 
-    # ---- rank the interventions ----
+    # ---- rank the interventions --------------------------------------------
     print("\nINTERVENTION OPTIONS\n")
-    base = [laws[h.name] for h in live]
     rows, refused = [], []
     for e in EXPTS:
-        preds = [h.predict(e, T) for h in live]
+        preds = [h.predict(e, T_cert) for h in live]
         missing = [h.name for h, p in zip(live, preds) if p is None]
         if missing:
             refused.append((e, missing)); continue
-        joint = list(zip(base, preds))
-        gain = entropy_of_partition(joint) - entropy_of_partition(base)
+        joint = list(zip(labels, preds))
+        gain = entropy_of_partition(joint) - resolved
         rows.append((e, gain))
     rows.sort(key=lambda r: -r[1])
     print(f"  {'Test':<20}{'Cost':>7}{'New information':>18}{'bits/$100':>12}")
@@ -360,13 +344,13 @@ def main():
     best = rows[0]
     dead = [e.name for e, g in rows if g == 0]
     print(f"\n  Recommended next test: {best[0].name}")
-    print(f"  Reason: largest reduction in remaining mechanism ambiguity "
-          f"({best[1]:.3f} bits).")
+    print(f"  Reason: largest reduction in residual mechanism ambiguity "
+          f"({best[1]:.3f} of the remaining {residual:.3f} bits).")
     if dead:
         print(f"  Avoid: {', '.join(dead)} -- redundant with existing evidence "
               f"(0.000 bits).")
 
-    # ---- the proof layer ----
+    # ---- the proof layer ----------------------------------------------------
     print("\nCERTIFICATE\n")
     if MODE != "EXACT":
         print("  status:    ESTIMATED -- approximate mode may not certify impossibility.")
@@ -374,7 +358,7 @@ def main():
         print("  status:    no kernel; nothing to certify.")
     else:
         v = K[0]
-        prod = [sum(v[i] * B[i][j] for i in range(len(B))) for j in range(len(B[0]))]
+        prod = [sum(v[i] * B[i][j] for i in range(N)) for j in range(len(B[0]))]
         print(f"  status:    CERTIFIED (exact rational arithmetic, finite class)")
         print(f"  vector:    v = ({', '.join(str(c) for c in v)})")
         print(f"             over ({', '.join(names)})")
@@ -386,7 +370,7 @@ def main():
         print(f"  hidden state is (mechanism, device state), the transition is block")
         print(f"  diagonal because the fault does not change, and the emission depends")
         print(f"  only on the device state. The theorem applies to that chain.")
-        print(f"    joint chain:      {len(live)} mechanisms x {NS} device states "
+        print(f"    joint chain:      {N} mechanisms x {NS} device states "
               f"= {n_joint} hidden states")
         print(f"    emission rank:    {rank_C}")
         print(f"    joint kernel dim: " +

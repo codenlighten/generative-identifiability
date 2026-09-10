@@ -109,7 +109,15 @@ A device with three internal states and sixteen candidate fault mechanisms; the 
 reports what remains unknowable, whether more passive data would help, and which
 diagnostic test buys the most information per dollar.
 
-Three things it deliberately gets right, which are the point of the demonstration:
+It reports the decomposition rather than a single number:
+
+```
+Total mechanism uncertainty:   3.700 bits     log2 of the surviving candidates
+Resolved by the passive law:   3.085 bits     H(O)
+Residual ambiguity H(G|O):     0.615 bits     what is actually still unknown
+```
+
+Four things it deliberately gets right, which are the point of the demonstration:
 
 - **It refuses to rank an experiment when any hypothesis supplies no outcome
   distribution.** No forward model, no information calculation — the contract is enforced
