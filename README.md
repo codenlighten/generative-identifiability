@@ -128,10 +128,30 @@ Three things it deliberately gets right, which are the point of the demonstratio
   here is `T ≤ 39 − 2 + 1 = 38`, but the joint kernel plateaus at `T = 6`. The claim is not
   "we watched to 38" — it is "we found a plateau at 6, and the theorem says a plateau
   cannot later break." That distinction is what makes the certificate cheap.
+### Three levels of indistinguishability
+
+Ordinary model discrimination has two states: identified, or not. This has three.
+
+| | |
+|---|---|
+| **Level 1** | different mechanisms, different observable laws — separable |
+| **Level 2** | different mechanisms, *same* observable law — pairwise comparison finds these |
+| **Level 3** | different **mixtures** of mechanisms, same observable law |
+
+Level 2 is what pairwise model discrimination catches. Level 3 is what the kernel adds, and
+it matters because scientific uncertainty is rarely "definitely A or definitely B" — it is
+a distribution over possibilities. If two different distributions over mechanisms imply the
+same observable process, the ambiguity is real at the belief level even though every pure
+candidate looks unique.
+
+In plain terms: *the system does not only find models that look identical; it finds
+different mixtures of models that are observationally identical, even when no pairwise
+comparison reveals the ambiguity.*
+
 - **It reports hidden *directions*, not hidden mechanisms, and decomposes them.** The
   certified kernel is split basis-independently into the part any pairwise comparison
-  would find and the part it would not: here 4 pairwise indistinguishable mechanisms plus
-  one higher-order relation, `F10` inseparable from `½F1 + ½F9`. That last line is the
+  would find and the part it would not: here 4 pairwise-equivalence directions plus one
+  higher-order relation, `F10` inseparable from `½F1 + ½F9`. That last line is the
   research result of Paper 2 surfacing as a product feature — no comparison of two
   mechanisms could ever produce it.
 - **It separates EXACT from APPROXIMATE mode.** Only exact rational arithmetic over a

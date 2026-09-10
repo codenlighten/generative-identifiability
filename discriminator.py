@@ -278,12 +278,14 @@ def main():
           f"   (certified at T = {T_cert}, see below)")
     print(f"\n  These are directions in mechanism-mixture space, not mechanisms.")
     print(f"  They decompose as:")
-    if pairs:
-        pl = ", ".join(f"{names[a]}/{names[b]}" for a, b in pairs)
-        print(f"    pairwise indistinguishable mechanisms: {dim_D}   ({pl})")
-    else:
-        print(f"    pairwise indistinguishable mechanisms: 0")
-    print(f"    higher-order mixture relations:        {dim_hi}"
+    print(f"    pairwise-equivalence directions: {dim_D}")
+    groups = [g for g in cls.values() if len(g) > 1]
+    if groups:
+        gl = ", ".join("/".join(names[i] for i in g) for g in groups)
+        print(f"      from equivalence classes: {gl}")
+        print(f"      (a class of m mechanisms contributes m-1 directions, not"
+              f" m(m-1)/2 pairs)")
+    print(f"    higher-order mixture directions: {dim_hi}"
           + ("   (no pairwise comparison finds these)" if dim_hi else ""))
     if K:
         # Present the pairwise relations first, then extend to a full basis of K.
