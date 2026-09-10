@@ -102,6 +102,34 @@ relative to an observation and intervention regime and a declared prediction tar
   the state space; intervention value is governed by the joint information carried by
   reset-specific observable laws, `H(Z_A)`, for which block crossing is only a proxy.
 
+## A worked demonstration
+
+[`discriminator.py`](discriminator.py) shows the framework as a tool rather than a paper.
+A device with three internal states and sixteen candidate fault mechanisms; the program
+reports what remains unknowable, whether more passive data would help, and which
+diagnostic test buys the most information per dollar.
+
+Three things it deliberately gets right, which are the point of the demonstration:
+
+- **It refuses to rank an experiment when any hypothesis supplies no outcome
+  distribution.** No forward model, no information calculation — the contract is enforced
+  rather than papered over.
+- **It certifies permanence through the joint chain, not the hypothesis-level plateau.**
+  A plateau only implies permanence when there is one shared transition operator, and
+  each mechanism has its own. The certificate embeds the family as a single hidden Markov
+  chain on (mechanism, device state) where the theorem genuinely applies.
+- **It separates EXACT from APPROXIMATE mode.** Only exact rational arithmetic over a
+  finite class may report CERTIFIED; estimated laws may report expected information gain
+  and must never claim permanent impossibility.
+
+We claim no novelty for detecting non-identifiability, which structural identifiability
+analysis and Fisher-information methods already do, nor for ranking experiments by
+expected information gain, which is Bayesian optimal experimental design. The narrower
+combination shown here is: given an explicit finite family of forward models and an
+observation regime, determine exactly which distinctions are permanently unobservable,
+certify that after a bounded horizon, and rank interventions by information added beyond
+what is already known.
+
 ## Running it
 
 Python 3, standard library only, except `mgs_preregistered.py` which needs NumPy.
@@ -114,6 +142,7 @@ python3 mgs_ident.py          # identifiability curves and the plateau
 python3 mgs_passive.py        # observation without intervention
 python3 mgs_stochastic.py     # exploratory Markov family (its criterion failed; kept)
 python3 mgs_preregistered.py  # frozen confirmatory run — a few minutes, ~1 GB
+python3 discriminator.py      # worked demonstration: fault diagnosis
 python3 audit.py              # re-derives every number in the manuscript
 ```
 
