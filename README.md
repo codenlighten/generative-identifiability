@@ -128,6 +128,12 @@ Three things it deliberately gets right, which are the point of the demonstratio
   here is `T ≤ 39 − 2 + 1 = 38`, but the joint kernel plateaus at `T = 6`. The claim is not
   "we watched to 38" — it is "we found a plateau at 6, and the theorem says a plateau
   cannot later break." That distinction is what makes the certificate cheap.
+- **It reports hidden *directions*, not hidden mechanisms, and decomposes them.** The
+  certified kernel is split basis-independently into the part any pairwise comparison
+  would find and the part it would not: here 4 pairwise indistinguishable mechanisms plus
+  one higher-order relation, `F10` inseparable from `½F1 + ½F9`. That last line is the
+  research result of Paper 2 surfacing as a product feature — no comparison of two
+  mechanisms could ever produce it.
 - **It separates EXACT from APPROXIMATE mode.** Only exact rational arithmetic over a
   finite class may report CERTIFIED; estimated laws may report expected information gain
   and must never claim permanent impossibility.

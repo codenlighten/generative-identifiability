@@ -258,23 +258,77 @@ def main():
         if any(z != 0 for z in prod):
             embed_ok = False
 
+    # Split the certified kernel into the part any pairwise comparison would
+    # find and the part it would not. The split is basis-independent: D is the
+    # span of the differences of passively identical mechanisms, D is contained
+    # in K always, and dim K - dim D counts genuine higher-order relations.
+    cls = defaultdict(list)
+    for i, h in enumerate(live):
+        cls[tuple(h.law(T_cert))].append(i)
+    pairs = [(g[0], j) for g in cls.values() for j in g[1:]]
+    dim_D = len(pairs)
+    dim_hi = len(K) - dim_D
+
     print("\nPASSIVE OBSERVABILITY\n")
-    print(f"  Mixture directions hidden, by horizon: " +
+    print(f"  Hidden mixture directions, by horizon: " +
           ", ".join(f"T={t}:{d}" for t, d in enumerate(hdims, 1)))
-    print(f"  Transiently hidden:  {hdims[0] - len(K)}   (dissolve as the horizon grows)")
-    print(f"  Structurally hidden: {len(K)}   (certified at T = {T_cert}, see below)")
-    if jstab:
-        print(f"  Hypothesis-level kernel is unchanged from T = {T_cert} to "
-              f"T = {T_cert+1}: {hdims[T_cert-1] == hdims[T_cert]}")
+    print(f"  Transiently hidden directions:  {hdims[0] - len(K)}"
+          f"   (dissolve as the horizon grows)")
+    print(f"  Structurally hidden directions: {len(K)}"
+          f"   (certified at T = {T_cert}, see below)")
+    print(f"\n  These are directions in mechanism-mixture space, not mechanisms.")
+    print(f"  They decompose as:")
+    if pairs:
+        pl = ", ".join(f"{names[a]}/{names[b]}" for a, b in pairs)
+        print(f"    pairwise indistinguishable mechanisms: {dim_D}   ({pl})")
+    else:
+        print(f"    pairwise indistinguishable mechanisms: 0")
+    print(f"    higher-order mixture relations:        {dim_hi}"
+          + ("   (no pairwise comparison finds these)" if dim_hi else ""))
     if K:
-        print("\n  Conclusion (sparsest relations first):")
-        for v in sorted(K, key=lambda w: sum(1 for c in w if c != 0))[:3]:
+        # Present the pairwise relations first, then extend to a full basis of K.
+        # The extension vectors are exactly the higher-order ones: relations no
+        # comparison of two mechanisms could ever surface.
+        def independent_extension(fixed, candidates):
+            basis, out = [row[:] for row in fixed], []
+            def rank(rows):
+                if not rows: return 0
+                m = [[F(x) for x in r] for r in rows]
+                R, Cn, rr = len(m), len(m[0]), 0
+                for c in range(Cn):
+                    pv = next((i for i in range(rr, R) if m[i][c] != 0), None)
+                    if pv is None: continue
+                    m[rr], m[pv] = m[pv], m[rr]
+                    d = m[rr][c]; m[rr] = [x / d for x in m[rr]]
+                    for i in range(R):
+                        if i != rr and m[i][c] != 0:
+                            f = m[i][c]
+                            m[i] = [a - f * b for a, b in zip(m[i], m[rr])]
+                    rr += 1
+                return rr
+            for v in candidates:
+                if rank(basis + [v]) > rank(basis):
+                    basis.append(list(v)); out.append(list(v))
+            return out
+
+        pair_vecs = [[F(1) if i == a else (F(-1) if i == b else F(0))
+                      for i in range(len(live))] for a, b in pairs]
+        hi_vecs = independent_extension(pair_vecs, K)
+
+        def show(v, kind):
             pos = [(names[i], v[i]) for i in range(len(v)) if v[i] > 0]
             neg = [(names[i], -v[i]) for i in range(len(v)) if v[i] < 0]
             fmt = lambda t: " + ".join(f"{c}*{n}" if c != 1 else n for n, c in t)
-            print(f"    no passive trace separates  {fmt(pos)}  from  {fmt(neg)}")
-        if len(K) > 3:
-            print(f"    ... and {len(K)-3} further relations")
+            print(f"    {kind} no passive trace separates  {fmt(pos)}  from  {fmt(neg)}")
+
+        print("\n  Conclusion:")
+        for v in pair_vecs[:3]:
+            show(v, "pair")
+        if len(pair_vecs) > 3:
+            print(f"    pair  ... and {len(pair_vecs)-3} further pairwise relations")
+        for v in hi_vecs:
+            show(v, "MIX ")
+        print(f"\n  More passive data will not resolve these. Intervention is required.")
     else:
         print("\n  Passive observation can in principle separate every candidate.")
 
